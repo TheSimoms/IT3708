@@ -63,6 +63,17 @@ public class World {
         obstacles.clear();
     }
 
+    public ArrayList<Force> getForces () {
+        return forces;
+    }
+
+    public void setForces (ArrayList<Force> forces) {
+        this.forces = forces;
+    }
+
+    public void addForce (Force force) {
+        forces.add(force);
+    }
 
     public World (int width, int height) {
         this.width = width;
