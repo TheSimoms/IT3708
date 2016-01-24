@@ -66,7 +66,7 @@ public class Gui {
         gc.setFill(Color.GREEN);
 
         for (Obstacle obstacle : world.getObstacles()) {
-            gc.fillOval(obstacle.getX(), obstacle.getY(), Config.PREDATOR_RADIUS, Config.PREDATOR_RADIUS);
+            gc.fillOval(obstacle.getX(), obstacle.getY(), Config.OBSTACLE_RADIUS, Config.OBSTACLE_RADIUS);
         }
     }
 

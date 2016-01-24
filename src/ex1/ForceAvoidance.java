@@ -25,7 +25,7 @@ public class ForceAvoidance extends Force {
 
                 boid.setAvoiding(true);
 
-                double weight = 1 - ((distance - obstacle.getRadius()) / Config.NEIGHBOURHOOD_RADIUS);
+                double weight = 1 - (distance / Config.NEIGHBOURHOOD_RADIUS);
                 double[] normalizedVelocity = boid.getNormalizedVelocity();
                 int[] nextPosition = new int[] {boid.getX() + (int)(distance * normalizedVelocity[0]), boid.getY() + (int)(distance * normalizedVelocity[1])};
 

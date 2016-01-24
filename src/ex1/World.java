@@ -110,23 +110,29 @@ public class World {
     }
 
     public int[] generateRandomCoordinates () {
-        return new int[] {(int)(Math.random() * width), (int)(Math.random() * height)};
+        int[] coordinates;
+
+        do {
+            coordinates = new int[] {(int)(Math.random() * width), (int)(Math.random() * height)};
+        } while (isPositionOccupied(coordinates));
+
+        return coordinates;
     }
 
-    public double[] generateRandomVelocity () {
-        return new double[] {-1.0 + 2 * Math.random(), -1.0 + 2 * Math.random()};
+    public double generateRandomSpeed (double maxSpeed) {
+        return (-1.0 + 2 * Math.random() * maxSpeed);
+    }
+
+    public double[] generateRandomVelocity (double maxSpeed) {
+        return new double[] {generateRandomSpeed(maxSpeed), generateRandomSpeed(maxSpeed)};
     }
 
     public void addRandomBoids (int n) {
         int remainingBoids = n;
-        int[] coordinates;
 
         while (remainingBoids > 0) {
-            do {
-                coordinates = generateRandomCoordinates();
-            } while (isPositionOccupied(coordinates));
-
-            double[] velocity = generateRandomVelocity();
+            int[] coordinates = generateRandomCoordinates();
+            double[] velocity = generateRandomVelocity(Config.BOID_MAX_SPEED);
 
             boids.add(new Boid(coordinates[0], coordinates[1], Config.BOID_RADIUS, this, velocity[0], velocity[1], Config.BOID_MAX_SPEED));
 
@@ -135,29 +141,20 @@ public class World {
     }
 
     public void addRandomPredator () {
-        int[] coordinates;
-
-        do {
-            coordinates = generateRandomCoordinates();
-        } while (isPositionOccupied(coordinates));
-
-        double[] velocity = generateRandomVelocity();
+        int[] coordinates = generateRandomCoordinates();
+        double[] velocity = generateRandomVelocity(Config.PREDATOR_MAX_SPEED);
 
         predators.add(new Predator(coordinates[0], coordinates[1], Config.PREDATOR_RADIUS, this, velocity[0], velocity[1], Config.PREDATOR_MAX_SPEED));
     }
 
     public void addRandomObstacle() {
-        int[] coordinates;
-
-        do {
-            coordinates = generateRandomCoordinates();
-        } while (isPositionOccupied(coordinates));
+        int[] coordinates = generateRandomCoordinates();
 
         obstacles.add(new Obstacle(coordinates[0], coordinates[1], Config.OBSTACLE_RADIUS, this));
     }
 
     public void addObstacle(int[] position, double radius) {
-        obstacles.add(new Obstacle(position[0], position[1], Config.OBSTACLE_RADIUS, this));
+        obstacles.add(new Obstacle(position[0], position[1], radius, this));
     }
 
     public int[] getDimensons () {
@@ -179,9 +176,11 @@ public class World {
 
     public void updateObjectMoves () {
         for (MovableWorldObject object : getMovableObjects()) {
-            object.updateVelocity();
-            object.limitVelocity();
-            object.updateNextPosition();
+            if (!object.isDead()) {
+                object.updateVelocity();
+                object.limitVelocity();
+                object.updateNextPosition();
+            }
         }
     }
 
@@ -226,7 +225,7 @@ public class World {
             }
 
             for (Boid neighbour : boids) {
-                if (finishedBoids.contains(neighbour)) {
+                if (finishedBoids.contains(neighbour) || neighbour.isDead()) {
                     continue;
                 }
 

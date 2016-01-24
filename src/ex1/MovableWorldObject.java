@@ -110,6 +110,14 @@ public abstract class MovableWorldObject extends WorldObject {
 
         nextX = (getX() + (int)(stepSize * vX)) % getWorld().getWidth();
         nextY = (getY() + (int)(stepSize * vY)) % getWorld().getHeight();
+
+        if (nextX < 0) {
+            nextX += getWorld().getWidth();
+        }
+
+        if (nextY < 0) {
+            nextY += getWorld().getHeight();
+        }
     }
 
     public void performMove () {
@@ -132,7 +140,7 @@ public abstract class MovableWorldObject extends WorldObject {
 
         double[] forces = calculateForces();
 
-        setvX(forces[0]);
-        setvY(forces[1]);
+        setvX(vX + forces[0]);
+        setvY(vY + forces[1]);
     }
 }

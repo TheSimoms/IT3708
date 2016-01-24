@@ -20,7 +20,7 @@ public class ForceFlight extends Force {
                 }
             }
 
-            double weight = 1 - (boid.getDistances().get(predator) / Config.NEIGHBOURHOOD_RADIUS);
+            double weight = 1 - (boid.getDistanceToObject(predator) / Config.NEIGHBOURHOOD_RADIUS);
             int[] distanceVector = boid.shortestDistanceVectorToPoint(predator.getPosition());
 
             force[0] = distanceVector[0] * weight;
