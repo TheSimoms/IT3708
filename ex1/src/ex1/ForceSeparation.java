@@ -14,7 +14,7 @@ public class ForceSeparation extends Force {
         }
 
         for (Boid neighbour : boid.getVisibleNeighbours()) {
-            double weight = 1 - (boid.getDistanceToObject(neighbour) / Config.NEIGHBOURHOOD_RADIUS);
+            double weight = boid.distanceWeight(neighbour);
             double[] distanceVector = Maths.normalizeVector(boid.shortestDistanceVectorToPoint(neighbour.getPosition()));
 
             force[0] -= distanceVector[0] * weight;

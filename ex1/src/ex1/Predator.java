@@ -24,20 +24,26 @@ public class Predator extends MovableWorldObject {
     }
 
 
-    public Predator(int x, int y, double radius, World world, double vX, double vY, double maxSpeed) {
+    public Predator(double x, double y, double radius, World world, double vX, double vY, double maxSpeed) {
         super(x, y, radius, world, vX, vY, maxSpeed);
     }
 
+
+    public void clearNeighbours () {
+        emptyVisiblePreys();
+    }
 
     public double[] calculateForces () {
         double[] totalForce = new double[] {0.0, 0.0};
 
         for (Boid prey : visiblePreys) {
-            double weight = 1 - (prey.getDistanceToObject(this) / Config.NEIGHBOURHOOD_RADIUS);
-            double[] direction = Maths.normalizeVector(shortestDistanceVectorToPoint(prey.getPosition()));
+            if (!prey.isDead()) {
+                double weight = this.distanceWeight(prey);
+                double[] direction = Maths.normalizeVector(shortestDistanceVectorToPoint(prey.getPosition()));
 
-            totalForce[0] += weight * direction[0];
-            totalForce[1] += weight * direction[1];
+                totalForce[0] += weight * direction[0];
+                totalForce[1] += weight * direction[1];
+            }
         }
 
         totalForce = Maths.normalizeVector(totalForce);

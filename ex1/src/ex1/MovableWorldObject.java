@@ -5,13 +5,14 @@ import java.util.HashMap;
 public abstract class MovableWorldObject extends WorldObject {
     private double vX, vY;
     private double maxSpeed;
-    private int nextX, nextY;
+    private double nextX, nextY;
 
     private boolean dead = false;
 
     private HashMap<MovableWorldObject, Double> distances = new HashMap<>();
 
     public abstract double[] calculateForces ();
+    public abstract void clearNeighbours ();
 
 
     public double getvX () {
@@ -30,19 +31,19 @@ public abstract class MovableWorldObject extends WorldObject {
         this.vY = vy;
     }
 
-    public int getNextX () {
+    public double getNextX () {
         return nextX;
     }
 
-    public void setNextX (int nextX) {
+    public void setNextX (double nextX) {
         this.nextX = nextX;
     }
 
-    public int getNextY () {
+    public double getNextY () {
         return nextY;
     }
 
-    public void setNextY (int nextY) {
+    public void setNextY (double nextY) {
         this.nextY = nextY;
     }
 
@@ -71,7 +72,7 @@ public abstract class MovableWorldObject extends WorldObject {
     }
 
 
-    public MovableWorldObject (int x, int y, double radius, World world, double vX, double vY, double maxSpeed) {
+    public MovableWorldObject (double x, double y, double radius, World world, double vX, double vY, double maxSpeed) {
         super(x, y, radius, world);
 
         this.vX = vX;
@@ -108,16 +109,8 @@ public abstract class MovableWorldObject extends WorldObject {
     public void updateNextPosition () {
         double stepSize = Config.STEP_SIZE;
 
-        nextX = (getX() + (int)(stepSize * vX)) % getWorld().getWidth();
-        nextY = (getY() + (int)(stepSize * vY)) % getWorld().getHeight();
-
-        if (nextX < 0) {
-            nextX += getWorld().getWidth();
-        }
-
-        if (nextY < 0) {
-            nextY += getWorld().getHeight();
-        }
+        nextX = (getX() + (stepSize * vX) + getWorld().getWidth()) % getWorld().getWidth();
+        nextY = (getY() + (stepSize * vY) + getWorld().getHeight()) % getWorld().getHeight();
     }
 
     public void performMove () {
@@ -127,10 +120,8 @@ public abstract class MovableWorldObject extends WorldObject {
         }
     }
 
-    public boolean die () {
+    public void die () {
         dead = true;
-
-        return dead;
     }
 
     public void updateVelocity () {
@@ -142,5 +133,13 @@ public abstract class MovableWorldObject extends WorldObject {
 
         setvX(vX + forces[0]);
         setvY(vY + forces[1]);
+    }
+
+    public boolean isHittingObject (WorldObject object) {
+        return shortestDistanceToObject(object) <= 0.0;
+    }
+
+    public boolean canSeeObject (WorldObject neighbour) {
+        return shortestDistanceToObject(neighbour) + getRadius() < Config.NEIGHBOURHOOD_RADIUS;
     }
 }

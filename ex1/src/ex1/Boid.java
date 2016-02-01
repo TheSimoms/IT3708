@@ -61,12 +61,25 @@ public class Boid extends MovableWorldObject {
     }
 
 
-    public Boid(int x, int y, double radius, World world, double vX, double vY, double maxSpeed) {
+    public Boid(double x, double y, double radius, World world, double vX, double vY, double maxSpeed) {
         super(x, y, radius, world, vX, vY, maxSpeed);
     }
 
+    public void clearNeighbours () {
+        emptyVisibleNeighbours();
+        emptyVisiblePredators();
+    }
 
     public double[] calculateForces () {
-        return getWorld().calculateForces(this);
+        double[] totalForce = new double[] {0.0, 0.0};
+
+        for (Force force : getWorld().getForces()) {
+            double[] forceValue = force.calculateForce(this);
+
+            totalForce[0] += forceValue[0] * force.getWeight();
+            totalForce[1] += forceValue[1] * force.getWeight();
+        }
+
+        return totalForce;
     }
 }

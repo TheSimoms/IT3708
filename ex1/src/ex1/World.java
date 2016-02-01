@@ -1,7 +1,6 @@
 package ex1;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,10 +66,6 @@ public class World {
         return forces;
     }
 
-    public void setForces (ArrayList<Force> forces) {
-        this.forces = forces;
-    }
-
     public void addForce (Force force) {
         forces.add(force);
     }
@@ -99,9 +94,9 @@ public class World {
         return res;
     }
 
-    public boolean isPositionOccupied (int[] position) {
+    public boolean isPositionOccupied (double[] position) {
         for (WorldObject object : getObjects()) {
-            if (Arrays.equals(object.getPosition(), position)) {
+            if (object.shortestDistanceToPoint(position) < object.getRadius() + 5.0) {
                 return true;
             }
         }
@@ -109,18 +104,18 @@ public class World {
         return false;
     }
 
-    public int[] generateRandomCoordinates () {
-        int[] coordinates;
+    public double[] generateRandomCoordinates () {
+        double[] coordinates;
 
         do {
-            coordinates = new int[] {(int)(Math.random() * width), (int)(Math.random() * height)};
+            coordinates = new double[] {(Math.random() * width), (Math.random() * height)};
         } while (isPositionOccupied(coordinates));
 
         return coordinates;
     }
 
     public double generateRandomSpeed (double maxSpeed) {
-        return (-1.0 + 2 * Math.random() * maxSpeed);
+        return -1.0 + 2 * Math.random() * maxSpeed;
     }
 
     public double[] generateRandomVelocity (double maxSpeed) {
@@ -131,7 +126,7 @@ public class World {
         int remainingBoids = n;
 
         while (remainingBoids > 0) {
-            int[] coordinates = generateRandomCoordinates();
+            double[] coordinates = generateRandomCoordinates();
             double[] velocity = generateRandomVelocity(Config.BOID_MAX_SPEED);
 
             boids.add(new Boid(coordinates[0], coordinates[1], Config.BOID_RADIUS, this, velocity[0], velocity[1], Config.BOID_MAX_SPEED));
@@ -141,19 +136,19 @@ public class World {
     }
 
     public void addRandomPredator () {
-        int[] coordinates = generateRandomCoordinates();
+        double[] coordinates = generateRandomCoordinates();
         double[] velocity = generateRandomVelocity(Config.PREDATOR_MAX_SPEED);
 
         predators.add(new Predator(coordinates[0], coordinates[1], Config.PREDATOR_RADIUS, this, velocity[0], velocity[1], Config.PREDATOR_MAX_SPEED));
     }
 
     public void addRandomObstacle() {
-        int[] coordinates = generateRandomCoordinates();
+        double[] coordinates = generateRandomCoordinates();
 
         obstacles.add(new Obstacle(coordinates[0], coordinates[1], Config.OBSTACLE_RADIUS, this));
     }
 
-    public void addObstacle(int[] position, double radius) {
+    public void addObstacle(double[] position, double radius) {
         obstacles.add(new Obstacle(position[0], position[1], radius, this));
     }
 
@@ -161,24 +156,12 @@ public class World {
         return new int[] {width, height};
     }
 
-    public double[] calculateForces (Boid boid) {
-        double[] totalForce = new double[] {0.0, 0.0};
-
-        for (Force force : forces) {
-            double[] forceValue = force.calculateForce(boid);
-
-            totalForce[0] += forceValue[0] * force.getWeight();
-            totalForce[1] += forceValue[1] * force.getWeight();
-        }
-
-        return totalForce;
-    }
-
     public void updateObjectMoves () {
         for (MovableWorldObject object : getMovableObjects()) {
             if (!object.isDead()) {
                 object.updateVelocity();
                 object.limitVelocity();
+
                 object.updateNextPosition();
             }
         }
@@ -186,13 +169,9 @@ public class World {
 
     public void performMoves () {
         for (MovableWorldObject object : getMovableObjects()) {
-            object.performMove();
-        }
-    }
-
-    public void reviveBoids () {
-        for (Boid boid : boids) {
-            boid.setDead(false);
+            if (!object.isDead()) {
+                object.performMove();
+            }
         }
     }
 
@@ -202,13 +181,8 @@ public class World {
     }
 
     public void clearNeighbourLists () {
-        for (Boid boid : boids) {
-            boid.getVisibleNeighbours().clear();
-            boid.getVisiblePredators().clear();
-        }
-
-        for (Predator predator : predators) {
-            predator.getVisiblePreys().clear();
+        for (MovableWorldObject object : getMovableObjects()) {
+            object.clearNeighbours();
         }
     }
 
@@ -220,6 +194,29 @@ public class World {
         for (Boid boid : boids) {
             finishedBoids.add(boid);
 
+            for (Predator predator : predators) {
+                if (boid.isHittingObject(predator)) {
+                    boid.die();
+
+                    break;
+                }
+
+                if (boid.canSeeObject(predator)) {
+                    boid.addVisiblePredator(predator);
+                    predator.addVisiblePrey(boid);
+
+                    setDistance(boid, predator, boid.shortestDistanceToObject(predator));
+                }
+            }
+
+            for (Obstacle obstacle : obstacles) {
+                if (boid.isHittingObject(obstacle)) {
+                    boid.die();
+
+                    break;
+                }
+            }
+
             if (boid.isDead()) {
                 continue;
             }
@@ -229,24 +226,11 @@ public class World {
                     continue;
                 }
 
-                double distance = boid.getDistanceToObject(neighbour);
-
-                if (distance < Config.NEIGHBOURHOOD_RADIUS) {
+                if (boid.canSeeObject(neighbour)) {
                     boid.addVisibleNeighbour(neighbour);
                     neighbour.addVisibleNeighbour(boid);
 
-                    setDistance(boid, neighbour, distance);
-                }
-            }
-
-            for (Predator predator : predators) {
-                double distance = boid.getDistanceToObject(predator);
-
-                if (distance < Config.NEIGHBOURHOOD_RADIUS) {
-                    boid.addVisiblePredator(predator);
-                    predator.addVisiblePrey(boid);
-
-                    setDistance(boid, predator, distance);
+                    setDistance(boid, neighbour, boid.shortestDistanceToObject(neighbour));
                 }
             }
         }
