@@ -14,8 +14,8 @@ public class Exercise extends Application {
         Gui gui = new Gui(world);
 
         world.addForce(new ForceAlignment(world, Config.ALIGNMENT_WEIGHT));
-        world.addForce(new ForceCohesion(world, Config.COHESION_WEIGHT));
         world.addForce(new ForceSeparation(world, Config.SEPARATION_WEIGHT));
+        world.addForce(new ForceCohesion(world, Config.COHESION_WEIGHT));
 
         world.addForce(new ForceAvoidance(world, Config.AVOIDANCE_WEIGHT));
         world.addForce(new ForceFlight(world, Config.FLIGHT_WEIGHT));
