@@ -23,6 +23,6 @@ public class ForceCohesion extends Force {
         force[0] /= neighbourCount;
         force[1] /= neighbourCount;
 
-        return Maths.normalizeVector(force);
+        return Maths.normalizeVector(boid.shortestDistanceVectorToPoint(force));
     }
 }
