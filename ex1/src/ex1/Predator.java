@@ -48,6 +48,6 @@ public class Predator extends MovableWorldObject {
 
         totalForce = Maths.normalizeVector(totalForce);
 
-        return Maths.scaleVectorToWeight(totalForce, Config.CHASE_WEIGHT);
+        return Maths.scaleVector(totalForce, Config.CHASE_WEIGHT);
     }
 }

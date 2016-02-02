@@ -17,7 +17,7 @@ public class Config {
     public static final double BOID_MAX_SPEED = 25;
     public static final double PREDATOR_MAX_SPEED = 2.0 * BOID_MAX_SPEED;
 
-    public static final double AVOIDANCE_WEIGHT = 200.0;
+    public static final double AVOIDANCE_WEIGHT = 500.0;
     public static final double FLIGHT_WEIGHT = 100.0;
     public static final double CHASE_WEIGHT = 50.0;
 

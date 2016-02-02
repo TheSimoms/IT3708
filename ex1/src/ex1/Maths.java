@@ -13,6 +13,24 @@ public class Maths {
         return Math.atan2(vector1[1], vector1[0]) - Math.atan2(vector0[1], vector0[0]);
     }
 
+    public static double[] addVectors (double[] vector0, double[] vector1) {
+        return new double[] {
+                vector0[0] + vector1[0],
+                vector0[1] + vector1[1]
+        };
+    }
+
+    public static double[] multiplyVectors (double[] vector0, double[] vector1) {
+        return new double[] {
+                vector0[0] * vector1[0],
+                vector0[1] * vector1[1]
+        };
+    }
+
+    public static double[] scaleVector (double[] vector, double weight) {
+        return new double[] {vector[0] * weight, vector[1] * weight};
+    }
+
     public static double[] normalizeVector (double[] vector) {
         double length = vectorSize(vector);
 
@@ -21,10 +39,6 @@ public class Maths {
         }
 
         return new double[] {vector[0] / length, vector[1] / length};
-    }
-
-    public static double[] scaleVectorToWeight (double[] vector, double weight) {
-        return new double[] {vector[0] * weight, vector[1] * weight};
     }
 
     public static double vectorDirection (double[] vector) {

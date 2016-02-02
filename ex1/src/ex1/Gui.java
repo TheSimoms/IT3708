@@ -42,35 +42,35 @@ public class Gui {
         gc.setFill(textColor);
         gc.setStroke(Color.BLACK);
 
-        gc.fillText("Alignment weight", 20, 25);
-        gc.fillText("Separation weight", 20, 65);
-        gc.fillText("Cohesion weight", 20, 105);
+        gc.fillText("Alignment weight", 20, 20);
+        gc.fillText("Separation weight", 20, 60);
+        gc.fillText("Cohesion weight", 20, 100);
 
-        drawButton(160, 10, true);
-        drawButton(160, 50, true);
-        drawButton(160, 90, true);
+        drawButton(160, 5, true);
+        drawButton(160, 45, true);
+        drawButton(160, 85, true);
 
-        drawButton(220, 10, false);
-        drawButton(220, 50, false);
-        drawButton(220, 90, false);
+        drawButton(220, 5, false);
+        drawButton(220, 45, false);
+        drawButton(220, 85, false);
 
-        gc.fillText("Predators", 500, 25);
-        gc.fillText("Obstacles", 500, 65);
+        gc.fillText("Predators", 500, 20);
+        gc.fillText("Obstacles", 500, 60);
 
-        drawButton(600, 10, true);
-        drawButton(600, 50, true);
+        drawButton(600, 5, true);
+        drawButton(600, 45, true);
 
-        drawButton(660, 10, false);
-        drawButton(660, 50, false);
+        drawButton(660, 5, false);
+        drawButton(660, 45, false);
 
     }
 
     private void drawForces () {
         gc.clearRect(275, 10, 50, 120);
 
-        gc.fillText(String.valueOf(world.getForces().get(0).getWeight()), 280, 35);
-        gc.fillText(String.valueOf(world.getForces().get(1).getWeight()), 280, 75);
-        gc.fillText(String.valueOf(world.getForces().get(2).getWeight()), 280, 115);
+        gc.fillText(String.valueOf(world.getForces().get(0).getWeight()), 280, 30);
+        gc.fillText(String.valueOf(world.getForces().get(1).getWeight()), 280, 70);
+        gc.fillText(String.valueOf(world.getForces().get(2).getWeight()), 280, 110);
     }
 
     private boolean isHittingButton (MouseEvent mouseEvent, double x, double y) {
@@ -105,26 +105,26 @@ public class Gui {
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle (MouseEvent mouseEvent) {
-                if (mouseEvent.getX() >= 160 && mouseEvent.getX() <= 255 && mouseEvent.getY() >= 10 && mouseEvent.getY() <= 125) {
+                if (mouseEvent.getX() >= 160 && mouseEvent.getX() <= 255 && mouseEvent.getY() >= 5 && mouseEvent.getY() <= 120) {
                     Force force = null;
                     boolean increase;
 
-                    if (isHittingButton(mouseEvent, 160, 10)) {
+                    if (isHittingButton(mouseEvent, 160, 5)) {
                         force = world.getForces().get(0);
                         increase = true;
-                    } else if (isHittingButton(mouseEvent, 160, 50)) {
+                    } else if (isHittingButton(mouseEvent, 160, 45)) {
                         force = world.getForces().get(1);
                         increase = true;
-                    } else if (isHittingButton(mouseEvent, 160, 90)) {
+                    } else if (isHittingButton(mouseEvent, 160, 85)) {
                         force = world.getForces().get(2);
                         increase = true;
-                    } else if (isHittingButton(mouseEvent, 220, 10)) {
+                    } else if (isHittingButton(mouseEvent, 220, 5)) {
                         force = world.getForces().get(0);
                         increase = false;
-                    } else if (isHittingButton(mouseEvent, 220, 50)) {
+                    } else if (isHittingButton(mouseEvent, 220, 45)) {
                         force = world.getForces().get(1);
                         increase = false;
-                    } else if (isHittingButton(mouseEvent, 220, 90)) {
+                    } else if (isHittingButton(mouseEvent, 220, 85)) {
                         force = world.getForces().get(2);
                         increase = false;
                     } else {
@@ -138,13 +138,13 @@ public class Gui {
                             force.setWeight(decreaseValue(force.getWeight()));
                         }
                     }
-                } else if (mouseEvent.getX() >=  600 && mouseEvent.getX() <= 635 && mouseEvent.getY() >= 10 && mouseEvent.getY() <= 45) {
+                } else if (isHittingButton(mouseEvent, 600, 5)) {
                     world.addRandomPredator();
-                } else if (mouseEvent.getX() >=  660 && mouseEvent.getX() <= 695 && mouseEvent.getY() >= 10 && mouseEvent.getY() <= 45) {
+                } else if (isHittingButton(mouseEvent, 660, 5)) {
                     world.removePredators();
-                } else if (mouseEvent.getX() >=  600 && mouseEvent.getX() <= 635 && mouseEvent.getY() >= 50 && mouseEvent.getY() <= 85) {
+                } else if (isHittingButton(mouseEvent, 600, 45)) {
                     world.addRandomObstacle();
-                } else if (mouseEvent.getX() >=  660 && mouseEvent.getX() <= 695 && mouseEvent.getY() >= 50 && mouseEvent.getY() <= 85) {
+                } else if (isHittingButton(mouseEvent, 660, 45)) {
                     world.removeObstacles();
                 }
             }
@@ -162,7 +162,7 @@ public class Gui {
                 drawObjects();
                 drawForces();
 
-                gc.clearRect(0, verticalMargin - 2 * Config.PREDATOR_RADIUS, world.getWidth(),  2 * Config.PREDATOR_RADIUS);
+                gc.clearRect(0, verticalMargin - Config.NEIGHBOURHOOD_RADIUS, world.getWidth(), Config.NEIGHBOURHOOD_RADIUS);
             }
         }.start();
 
@@ -180,16 +180,14 @@ public class Gui {
     }
 
     private void drawBoids () {
-        if (!Config.DEBUG) {
-            gc.setFill(boidColor);
-        }
-
         for (Boid boid : world.getBoids()) {
+            gc.setFill(boidColor);
+
             if (boid.isDead()) {
                 if (Config.DEBUG) {
                     gc.setFill(boidDeadColor);
-
-                    drawMovableObject(boid);
+                } else {
+                    continue;
                 }
             } else {
                 if (Config.DEBUG) {
@@ -199,15 +197,15 @@ public class Gui {
                     drawCircle(boid.getX(), boid.getY(), Config.NEIGHBOURHOOD_RADIUS);
                     gc.setGlobalAlpha(1.0);
 
+                    gc.setFill(boidColor);
+
                     if (boid.isAvoiding()) {
                         gc.setFill(boidAvoidingColor);
-                    } else {
-                        gc.setFill(boidColor);
                     }
                 }
-
-                drawMovableObject(boid);
             }
+
+            drawMovableObject(boid);
         }
     }
 

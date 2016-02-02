@@ -148,14 +148,6 @@ public class World {
         obstacles.add(new Obstacle(coordinates[0], coordinates[1], Config.OBSTACLE_RADIUS, this));
     }
 
-    public void addObstacle(double[] position, double radius) {
-        obstacles.add(new Obstacle(position[0], position[1], radius, this));
-    }
-
-    public int[] getDimensons () {
-        return new int[] {width, height};
-    }
-
     public void updateObjectMoves () {
         for (MovableWorldObject object : getMovableObjects()) {
             if (!object.isDead()) {
@@ -173,11 +165,6 @@ public class World {
                 object.performMove();
             }
         }
-    }
-
-    public void setDistance (MovableWorldObject object0, MovableWorldObject object1, double distance) {
-        object0.setDistance(object1, distance);
-        object1.setDistance(object0, distance);
     }
 
     public void clearNeighbourLists () {
@@ -204,8 +191,6 @@ public class World {
                 if (boid.canSeeObject(predator)) {
                     boid.addVisiblePredator(predator);
                     predator.addVisiblePrey(boid);
-
-                    setDistance(boid, predator, boid.shortestDistanceToObject(predator));
                 }
             }
 
@@ -229,8 +214,6 @@ public class World {
                 if (boid.canSeeObject(neighbour)) {
                     boid.addVisibleNeighbour(neighbour);
                     neighbour.addVisibleNeighbour(boid);
-
-                    setDistance(boid, neighbour, boid.shortestDistanceToObject(neighbour));
                 }
             }
         }

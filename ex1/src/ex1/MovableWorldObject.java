@@ -1,15 +1,11 @@
 package ex1;
 
-import java.util.HashMap;
-
 public abstract class MovableWorldObject extends WorldObject {
     private double vX, vY;
     private double maxSpeed;
     private double nextX, nextY;
 
     private boolean dead = false;
-
-    private HashMap<MovableWorldObject, Double> distances = new HashMap<>();
 
     public abstract double[] calculateForces ();
     public abstract void clearNeighbours ();
@@ -61,14 +57,6 @@ public abstract class MovableWorldObject extends WorldObject {
 
     public void setDead (boolean dead) {
         this.dead = dead;
-    }
-
-    public HashMap<MovableWorldObject, Double> getDistances () {
-        return distances;
-    }
-
-    public void setDistance (MovableWorldObject neighbour, double distance) {
-        distances.put(neighbour, distance);
     }
 
 

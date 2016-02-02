@@ -1,8 +1,5 @@
 package ex1;
 
-/**
- * Created by user on 21.01.16.
- */
 public abstract class WorldObject {
     private double x, y;
     private double radius;
@@ -52,13 +49,6 @@ public abstract class WorldObject {
 
     public double[] getPosition () {
         return new double[] {x, y};
-    }
-
-    public void setPosition (double[] position) {
-        if (position.length == 2) {
-            setX(position[0]);
-            setY(position[1]);
-        }
     }
 
     public double[] shortestDistanceVectorToPoint (double[] targetPoint) {

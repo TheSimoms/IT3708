@@ -14,10 +14,11 @@ public class ForceAlignment extends Force {
         }
 
         for (Boid neighbour : boid.getVisibleNeighbours()) {
+            double weight = boid.distanceWeight(neighbour);
             double[] neighbourVelocity = neighbour.getNormalizedVelocity();
 
-            force[0] += neighbourVelocity[0];
-            force[1] += neighbourVelocity[1];
+            force[0] += neighbourVelocity[0] * weight;
+            force[1] += neighbourVelocity[1] * weight;
         }
 
         return Maths.normalizeVector(force);
