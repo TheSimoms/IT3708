@@ -4,7 +4,7 @@ public class Config {
     public static final double STEP_SIZE = 0.1;
     public static final boolean DEBUG = false;
 
-    public static final int NUMBER_OF_BOIDS = 200;
+    public static final int NUMBER_OF_BOIDS = 500;
 
     public static final int WIDTH = 1600;
     public static final int HEIGHT = 800;
@@ -15,7 +15,7 @@ public class Config {
     public static final double OBSTACLE_RADIUS = 5.0 * BOID_RADIUS;
 
     public static final double BOID_MAX_SPEED = 25;
-    public static final double PREDATOR_MAX_SPEED = 2.0 * BOID_MAX_SPEED;
+    public static final double PREDATOR_MAX_SPEED = 1.25 * BOID_MAX_SPEED;
 
     public static final double AVOIDANCE_WEIGHT = 500.0;
     public static final double FLIGHT_WEIGHT = 100.0;

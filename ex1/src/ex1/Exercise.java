@@ -20,8 +20,6 @@ public class Exercise extends Application {
         world.addForce(new ForceAvoidance(world, Config.AVOIDANCE_WEIGHT));
         world.addForce(new ForceFlight(world, Config.FLIGHT_WEIGHT));
 
-        world.addRandomObstacle();
-        world.addRandomPredator();
         world.addRandomBoids(Config.NUMBER_OF_BOIDS);
 
         gui.start(primaryStage);

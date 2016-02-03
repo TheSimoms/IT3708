@@ -128,6 +128,6 @@ public abstract class MovableWorldObject extends WorldObject {
     }
 
     public boolean canSeeObject (WorldObject neighbour) {
-        return shortestDistanceToObject(neighbour) + getRadius() <= Config.NEIGHBOURHOOD_RADIUS;
+        return shortestDistanceToPoint(neighbour.getPosition()) <= Config.NEIGHBOURHOOD_RADIUS;
     }
 }
