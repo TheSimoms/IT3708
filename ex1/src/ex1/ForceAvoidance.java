@@ -32,9 +32,7 @@ public class ForceAvoidance extends Force {
                     boid.setAvoiding(true);
 
                     double weight = boid.distanceWeight(obstacle);
-                    double[] nextPosition = new double[]{boid.getX() + (distance * normalizedVelocity[0]), boid.getY() + (distance * normalizedVelocity[1])};
-
-                    double angle = Maths.angleBetweenVectors(boid.shortestDistanceVectorToPoint(obstacle.getPosition()), boid.shortestDistanceVectorToPoint(nextPosition));
+                    double angle = Maths.angleBetweenVectors(boid.shortestDistanceVectorToPoint(obstacle.getPosition()), boid.shortestDistanceVectorToPoint(boid.getPosition()));
 
                     if (angle < 0.0) {
                         weight *= -1;

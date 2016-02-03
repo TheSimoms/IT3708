@@ -217,5 +217,15 @@ public class World {
                 }
             }
         }
+
+        if (!Config.DEBUG) {
+            for (int i = 0; i < boids.size(); i++) {
+                Boid boid = boids.get(i);
+
+                if (boid.isDead()) {
+                    boids.remove(boid);
+                }
+            }
+        }
     }
 }

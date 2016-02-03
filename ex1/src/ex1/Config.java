@@ -4,7 +4,7 @@ public class Config {
     public static final double STEP_SIZE = 0.1;
     public static final boolean DEBUG = false;
 
-    public static final int NUMBER_OF_BOIDS = 500;
+    public static final int NUMBER_OF_BOIDS = 200;
 
     public static final int WIDTH = 1600;
     public static final int HEIGHT = 800;
