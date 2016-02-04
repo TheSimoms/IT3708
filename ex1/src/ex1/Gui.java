@@ -210,9 +210,17 @@ public class Gui {
     }
 
     private void drawPredators () {
-        gc.setFill(predatorColor);
-
         for (Predator predator : world.getPredators()) {
+            if (Config.DEBUG) {
+                gc.setFill(boidNeighbourColor);
+
+                gc.setGlobalAlpha(0.1);
+                drawCircle(predator.getX(), predator.getY(), Config.NEIGHBOURHOOD_RADIUS);
+                gc.setGlobalAlpha(1.0);
+            }
+
+            gc.setFill(predatorColor);
+
             drawMovableObject(predator);
         }
     }
