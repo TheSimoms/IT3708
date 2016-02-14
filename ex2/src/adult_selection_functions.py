@@ -16,7 +16,7 @@ def mixing(**kwargs):
 
 
 ADULT_SELECTION_FUNCTIONS = [
-    ['Full selection', full_selection, None],
+    ['Full replacement', full_selection, None],
     ['Over-production', over_production, None],
     ['Mixing', mixing, None],
 ]

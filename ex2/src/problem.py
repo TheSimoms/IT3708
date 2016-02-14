@@ -25,3 +25,7 @@ class Problem:
     @staticmethod
     def mutation_function():
         raise NotImplemented
+
+    @staticmethod
+    def extra_parameters():
+        return {}
