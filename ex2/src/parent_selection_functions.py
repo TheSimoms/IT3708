@@ -1,7 +1,7 @@
 from random import random, choice, sample
 from math import sqrt
 
-from .utils import get_fitness
+from utils import get_fitness
 
 
 def fitness_proportionate(**kwargs):
@@ -98,11 +98,16 @@ def roulette(population, scaling):
                 if position >= roulette_ball_position:
                     individual = roulette_wheel[position]
 
-                    if individual not in pair:
+                    # if individual not in pair:
+                    #     pair.append(individual)
+                    #     roulette_pool.remove(individual)
+
+                    if True:
                         pair.append(individual)
-                        roulette_pool.remove(individual)
 
                     break
+
+        return pair
 
     pairs = []
 
@@ -110,3 +115,14 @@ def roulette(population, scaling):
         pairs.append(roll())
 
     return pairs
+
+
+PARENT_SELECTION_FUNCTIONS = [
+    ['Fitness proportionate', fitness_proportionate, None],
+    ['Sigma scaling', sigma_scaling, None],
+    ['Tournament selection', tournament_selection, [
+        ['Group size', 'group_size', int],
+        ['Epsilon', 'epsilon', float]
+    ]],
+    ['Uniform chance selection', uniform_selection, None],
+]

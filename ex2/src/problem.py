@@ -17,3 +17,11 @@ class Problem:
     @staticmethod
     def represent_phenotype(phenotype, **kwargs):
         raise NotImplemented
+
+    @staticmethod
+    def crossover_function():
+        raise NotImplemented
+
+    @staticmethod
+    def mutation_function():
+        raise NotImplemented

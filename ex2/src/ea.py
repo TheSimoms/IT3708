@@ -1,6 +1,6 @@
 from math import sqrt
 
-from .utils import get_fitness, crossover
+from utils import get_fitness, crossover, list_to_string
 
 
 class Individual:
@@ -18,16 +18,13 @@ class EA:
         self.population_size = parameters.get('population_size')
         self.genome_size = parameters.get('genome_size')
 
-        self.number_of_generations = parameters.get('number_of_generations')
+        self.number_of_children = parameters.get('number_of_children')
 
         self.crossover_probability = parameters.get('crossover_probability')
         self.mutation_probability = parameters.get('mutation_probability')
 
         self.adult_selection_function = parameters.get('adult_selection_function')
         self.parent_selection_function = parameters.get('parent_selection_function')
-
-        self.crossover_function = parameters.get('crossover_function')
-        self.mutation_function = parameters.get('mutation_function')
 
         self.max_number_of_generations = parameters.get('max_number_of_generations')
         self.target_fitness = parameters.get('target_fitness')
@@ -62,7 +59,7 @@ class EA:
         )
 
     def __mutation_function(self, genome):
-        return self.mutation_function(
+        return self.problem.mutation_function()(
             genome=genome, probability=self.mutation_probability, **self.parameters
         )
 
@@ -72,12 +69,14 @@ class EA:
 
         for pair in mating_pairs:
             genomes = map(
-                self.mutation_function,
+                lambda individual: self.problem.mutation_function()(
+                    genome=individual, probability=self.mutation_probability, length=self.genome_size
+                ),
                 crossover(
                     pair,
                     self.crossover_probability,
-                    self.crossover_function,
-                    self.parameters['number_of_children']
+                    self.problem.crossover_function(),
+                    self.number_of_children
                 )
             )
 
@@ -102,8 +101,17 @@ class EA:
 
         best_phenotypes.append(best_individual.phenotype)
 
-    def __log(self, generation_number, fitness_data, best_phenotypes):
-        pass
+    @staticmethod
+    def __log(generation_number, fitness_data, best_phenotypes):
+        print('\nGeneration number: %d' % generation_number)
+
+        print('Fitness:')
+        print('\tBest: %.2f' % fitness_data['best'][-1])
+        print('\tWorst: %.2f' % fitness_data['worst'][-1])
+        print('\tAverage: %.2f' % fitness_data['average'][-1])
+        print('\tStandard deviation: %.2f' % fitness_data['standard_deviation'][-1])
+
+        print('Best phenotype: %s' % list_to_string(best_phenotypes[-1]))
 
     def __is_simulation_finished(self, generation_number, best_fitness):
         if generation_number >= self.max_number_of_generations:
@@ -134,6 +142,7 @@ class EA:
             self.__generate_fitness_values(children)
 
             population = self.__generate_adult_population(population, children)
+
             children = self.__generate_offspring(population)
             best_individual = max(population, key=get_fitness)
 
@@ -146,7 +155,8 @@ class EA:
                     'population': population,
                     'best_individual': best_individual,
                     'fitness_data': fitness_data,
-                    'best_phenotypes': best_phenotypes
+                    'best_phenotypes': best_phenotypes,
+                    'problem': self.problem
                 }
 
             generation_number += 1
