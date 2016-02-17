@@ -33,7 +33,7 @@ class LOLZ(Problem):
 
     @staticmethod
     def represent_phenotype(phenotype, **kwargs):
-        raise str(phenotype)
+        return str(phenotype)
 
     @staticmethod
     def crossover_function():

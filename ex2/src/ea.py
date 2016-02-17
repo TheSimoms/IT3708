@@ -11,7 +11,7 @@ class Individual:
 
 
 class EA:
-    def __init__(self, parameters):
+    def __init__(self, parameters, log=True):
         self.problem = parameters.get('problem')
         self.parameters = parameters.get('parameters')
 
@@ -28,6 +28,8 @@ class EA:
 
         self.max_number_of_generations = parameters.get('max_number_of_generations')
         self.target_fitness = parameters.get('target_fitness')
+
+        self.log = log
 
     def __initialize(self):
         return [
@@ -103,7 +105,7 @@ class EA:
 
     @staticmethod
     def __log(generation_number, fitness_data, best_phenotypes):
-        print('\nGeneration number: %d' % generation_number)
+        print('Generation number: %d' % generation_number)
 
         print('Fitness:')
         print('\tBest: %.2f' % fitness_data['best'][-1])
@@ -111,13 +113,15 @@ class EA:
         print('\tAverage: %.2f' % fitness_data['average'][-1])
         print('\tStandard deviation: %.2f' % fitness_data['standard_deviation'][-1])
 
-        print('Best phenotype: %s' % list_to_string(best_phenotypes[-1]))
+        print('Best phenotype: %s\n' % list_to_string(best_phenotypes[-1]))
 
     def __is_simulation_finished(self, generation_number, best_fitness):
         if generation_number >= self.max_number_of_generations:
-            pass
+            if self.log:
+                print('Maximum number of generations reached!')
         elif best_fitness >= self.target_fitness:
-            pass
+            if self.log:
+                print('Target fitness reached!')
         else:
             return False
 
@@ -147,7 +151,9 @@ class EA:
             best_individual = max(population, key=get_fitness)
 
             self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
-            self.__log(generation_number, fitness_data, best_phenotypes)
+
+            if self.log:
+                self.__log(generation_number, fitness_data, best_phenotypes)
 
             if self.__is_simulation_finished(generation_number, best_individual.fitness):
                 return {

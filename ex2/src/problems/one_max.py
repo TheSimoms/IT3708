@@ -5,7 +5,7 @@ from reproduction_functions import mix_genome, genome_bit_mutation
 
 class OneMax(Problem):
     def __init__(self):
-        super().__init__('One max')
+        super().__init__('One-Max')
 
     @staticmethod
     def generate_population(population_size, genome_size, **kwargs):
@@ -21,7 +21,7 @@ class OneMax(Problem):
 
     @staticmethod
     def represent_phenotype(phenotype, **kwargs):
-        raise str(phenotype)
+        return str(phenotype)
 
     @staticmethod
     def crossover_function():

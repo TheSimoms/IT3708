@@ -1,3 +1,15 @@
+def get_boolean_parameter(text):
+    while True:
+        string = str(input('%s? [y, n]: ' % text))
+
+        if string not in ('y', 'n'):
+            print('Please answer y or n')
+
+            continue
+
+        return string == 'y'
+
+
 def get_numeric_parameter(variable_name, data_type):
     while True:
         try:
