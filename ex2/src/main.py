@@ -11,9 +11,21 @@ from adult_selection_functions import ADULT_SELECTION_FUNCTIONS, full_selection
 from parent_selection_functions import PARENT_SELECTION_FUNCTIONS, fitness_proportionate
 
 
-def get_parameters(problem):
+"""
+{
+            'S': get_numeric_parameter('S', int),
+            'L': get_numeric_parameter('L', int),
+            'isLocal': get_boolean_parameter('Locally surprising')
+        }
+
+        {
+            'z': get_numeric_parameter('Z', int)
+        }
+"""
+
+
+def get_parameters():
     parameters = {
-        'problem': problem,
         'parameters': {},
 
         'population_size': get_numeric_parameter('Population size', int),
@@ -46,7 +58,16 @@ def get_parameters(problem):
     if parent_selection_function_parameters is not None:
         parameters['parameters'].update(get_choice_sub_parameter(parent_selection_function_parameters))
 
-    parameters['parameters'].update(parameters['problem'].extra_parameters())
+    problem = get_choice_parameter(
+        'Problem', [
+            ['One-Max', OneMax(), None],
+            ['LOLZ', LOLZ(), None],
+            ['Surprising sequences', SurprisingSequences, None],
+        ]
+    )[0]
+
+    parameters['problem'] = problem
+    parameters['parameters'].update(problem.extra_parameters())
 
     print('')
 
@@ -68,10 +89,8 @@ def plot_results(results):
     plt.show()
 
 
-def run_problem(problem):
-    print('Problem: %s\n' % problem.name)
-
-    parameters = get_parameters(problem)
+def run_problem():
+    parameters = get_parameters()
     ea = EA(parameters)
 
     plot_results(ea.run())
@@ -132,10 +151,7 @@ def main():
     if analysis:
         run_analysis()
     else:
-        run_problem(OneMax())
-        run_problem(LOLZ())
-        run_problem(SurprisingSequences())
-
+        run_problem()
 
 if __name__ == '__main__':
     main()

@@ -40,6 +40,9 @@ def get_choice_sub_parameter(sub_parameters):
     parameters = {}
 
     for parameter in sub_parameters:
-        parameters[parameter[1]] = get_numeric_parameter(parameter[0], parameter[2])
+        if parameter[2] == bool:
+            parameters[parameter[1]] = get_boolean_parameter(parameter[0])
+        else:
+            parameters[parameter[1]] = get_numeric_parameter(parameter[0], parameter[2])
 
     return parameters
