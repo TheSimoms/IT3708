@@ -116,10 +116,10 @@ class EA:
         print('Best phenotype: %s\n' % list_to_string(best_phenotypes[-1]))
 
     def __is_simulation_finished(self, generation_number, best_fitness):
-        if generation_number >= self.max_number_of_generations:
+        if self.max_number_of_generations is not None and generation_number >= self.max_number_of_generations:
             if self.log:
                 print('Maximum number of generations reached!')
-        elif best_fitness >= self.target_fitness:
+        elif self.target_fitness is not None and best_fitness >= self.target_fitness:
             if self.log:
                 print('Target fitness reached!')
         else:

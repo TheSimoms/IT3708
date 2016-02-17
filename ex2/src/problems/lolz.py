@@ -12,8 +12,7 @@ class LOLZ(Problem):
     def generate_population(population_size, genome_size, **kwargs):
         return generate_bit_population(population_size=population_size, genome_size=genome_size)
 
-    @staticmethod
-    def fitness_function(phenotype, **kwargs):
+    def fitness_function(self, phenotype, **kwargs):
         leading_character = phenotype[0]
 
         for i in range(1, len(phenotype)):

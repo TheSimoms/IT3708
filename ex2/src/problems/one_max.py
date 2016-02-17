@@ -7,12 +7,22 @@ class OneMax(Problem):
     def __init__(self):
         super().__init__('One-Max')
 
+        self.target_phenotype = None
+
     @staticmethod
     def generate_population(population_size, genome_size, **kwargs):
         return generate_bit_population(population_size=population_size, genome_size=genome_size)
 
-    @staticmethod
-    def fitness_function(phenotype, **kwargs):
+    def fitness_function(self, phenotype, **kwargs):
+        if self.target_phenotype is not None:
+            score = 0.0
+
+            for i in range(len(phenotype)):
+                if self.target_phenotype[i] == phenotype:
+                    score += 1
+
+            return score / len(phenotype)
+
         return phenotype.count(1) / len(phenotype)
 
     @staticmethod

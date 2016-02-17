@@ -16,8 +16,7 @@ class SurprisingSequences(Problem):
             **kwargs
         )
 
-    @staticmethod
-    def fitness_function(phenotype, **kwargs):
+    def fitness_function(self, phenotype, **kwargs):
         return
 
     @staticmethod

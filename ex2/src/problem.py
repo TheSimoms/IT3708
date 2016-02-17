@@ -6,8 +6,7 @@ class Problem:
     def generate_population(population_size, genome_size, **kwargs):
         raise NotImplemented
 
-    @staticmethod
-    def fitness_function(phenotype, **kwargs):
+    def fitness_function(self, phenotype, **kwargs):
         raise NotImplemented
 
     @staticmethod

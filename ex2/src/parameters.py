@@ -32,7 +32,7 @@ def get_choice_parameter(variable_name, choices):
                 else:
                     print('You need to supply a value in the range [0, %d]' % (number_of_choices-1))
 
-        except NameError:
+        except ValueError:
             print('You need to supply an integer')
 
 
