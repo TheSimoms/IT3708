@@ -10,10 +10,15 @@ def get_boolean_parameter(text):
         return string == 'y'
 
 
-def get_numeric_parameter(variable_name, data_type):
+def get_numeric_parameter(variable_name, data_type, allow_none=False):
     while True:
         try:
-            return data_type(input('%s: ' % variable_name))
+            answer = input('%s%s: ' % (variable_name, ' (optional)' if allow_none else ''))
+
+            if len(answer) == 0 and allow_none:
+                return None
+
+            return data_type(answer)
         except NameError:
             print('You need to supply data of type %s' % data_type)
 

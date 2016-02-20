@@ -25,7 +25,7 @@ def get_parameters():
         'crossover_probability': get_numeric_parameter('Crossover probability', float),
         'mutation_probability': get_numeric_parameter('Mutation probability', float),
 
-        'max_number_of_generations': get_numeric_parameter('Maximum number of generations', int),
+        'max_number_of_generations': get_numeric_parameter('Maximum number of generations', int, True),
         'target_fitness': 1.0,
     }
 

@@ -17,14 +17,28 @@ class SurprisingSequences(Problem):
         )
 
     def fitness_function(self, phenotype, **kwargs):
-        return
+        length = len(phenotype)
+        sequences = []
+
+        for i in range(length - 1):
+            for j in range(i + 1, length):
+                sequences.append('%s%s%s' % (phenotype[i], j - i - 1, phenotype[j]))
+
+                if kwargs.get('isLocal'):
+                    break
+
+        number_of_unique_sequences = len(set(sequences)) - 1
+
+        if kwargs.get('L'):
+            return number_of_unique_sequences / kwargs.get('L')
+        else:
+            return number_of_unique_sequences / (len(sequences) - 1)
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):
         return tuple(genome)
 
-    @staticmethod
-    def represent_phenotype(phenotype, **kwargs):
+    def represent_phenotype(self, phenotype, **kwargs):
         return 'S=%d, L=%d, %s' % (kwargs.get('S'), kwargs.get('L'), ', '.join(phenotype))
 
     @staticmethod
@@ -39,6 +53,6 @@ class SurprisingSequences(Problem):
     def extra_parameters():
         return {
             'S': get_numeric_parameter('S', int),
-            'L': get_numeric_parameter('L', int),
+            'L': get_numeric_parameter('L', int, True),
             'isLocal': get_boolean_parameter('Locally surprising')
         }

@@ -1,4 +1,4 @@
-from utils import generate_bit_population, bit_string_to_ints
+from utils import generate_bit_population, bit_string_to_ints, list_to_string
 from problem import Problem
 from reproduction_functions import mix_genome, genome_bit_mutation
 
@@ -29,9 +29,8 @@ class OneMax(Problem):
     def genome_to_phenotype(genome, **kwargs):
         return bit_string_to_ints(genome)
 
-    @staticmethod
-    def represent_phenotype(phenotype, **kwargs):
-        return str(phenotype)
+    def represent_phenotype(self, phenotype, **kwargs):
+        return list_to_string(phenotype)
 
     @staticmethod
     def crossover_function():

@@ -103,8 +103,7 @@ class EA:
 
         best_phenotypes.append(best_individual.phenotype)
 
-    @staticmethod
-    def __log(generation_number, fitness_data, best_phenotypes):
+    def __log(self, generation_number, fitness_data, best_phenotypes):
         print('Generation number: %d' % generation_number)
 
         print('Fitness:')
@@ -113,7 +112,9 @@ class EA:
         print('\tAverage: %.2f' % fitness_data['average'][-1])
         print('\tStandard deviation: %.2f' % fitness_data['standard_deviation'][-1])
 
-        print('Best phenotype: %s\n' % list_to_string(best_phenotypes[-1]))
+        print('Best phenotype: %s\n' % self.problem.represent_phenotype(
+            phenotype=best_phenotypes[-1], **self.parameters
+        ))
 
     def __is_simulation_finished(self, generation_number, best_fitness):
         if self.max_number_of_generations is not None and generation_number >= self.max_number_of_generations:
@@ -140,29 +141,35 @@ class EA:
 
         population = []
         children = self.__initialize()
+        best_individual = None
 
         while True:
-            self.__generate_phenotypes(children)
-            self.__generate_fitness_values(children)
+            try:
+                self.__generate_phenotypes(children)
+                self.__generate_fitness_values(children)
 
-            population = self.__generate_adult_population(population, children)
+                population = self.__generate_adult_population(population, children)
 
-            children = self.__generate_offspring(population)
-            best_individual = max(population, key=get_fitness)
+                children = self.__generate_offspring(population)
+                best_individual = max(population, key=get_fitness)
 
-            self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
+                self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
 
-            if self.log:
-                self.__log(generation_number, fitness_data, best_phenotypes)
+                if self.log:
+                    self.__log(generation_number, fitness_data, best_phenotypes)
 
-            if self.__is_simulation_finished(generation_number, best_individual.fitness):
-                return {
-                    'generation_number': generation_number,
-                    'population': population,
-                    'best_individual': best_individual,
-                    'fitness_data': fitness_data,
-                    'best_phenotypes': best_phenotypes,
-                    'problem': self.problem
-                }
+                if self.__is_simulation_finished(generation_number, best_individual.fitness):
+                    break
 
-            generation_number += 1
+                generation_number += 1
+            except KeyboardInterrupt:
+                break
+
+        return {
+            'generation_number': generation_number,
+            'population': population,
+            'best_individual': best_individual,
+            'fitness_data': fitness_data,
+            'best_phenotypes': best_phenotypes,
+            'problem': self.problem
+        }

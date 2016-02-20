@@ -13,8 +13,7 @@ class Problem:
     def genome_to_phenotype(genome, **kwargs):
         raise NotImplemented
 
-    @staticmethod
-    def represent_phenotype(phenotype, **kwargs):
+    def represent_phenotype(self, phenotype, **kwargs):
         raise NotImplemented
 
     @staticmethod
