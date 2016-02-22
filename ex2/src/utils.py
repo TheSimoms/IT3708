@@ -45,10 +45,6 @@ def crossover(pair, crossover_probability, crossover_function, number_of_childre
     return tuple(children)
 
 
-def get_fitness(individual):
-    return individual.fitness
-
-
 def flip_bit(bit):
     return '1' if bit == '0' else '1'
 

@@ -1,32 +1,30 @@
 from random import random, choice, sample
 from math import sqrt
 
-from utils import get_fitness
-
 
 def fitness_proportionate(**kwargs):
     population = kwargs.get('population')
-    total_fitness = sum(get_fitness(individual) for individual in population)
+    total_fitness = sum(individual.fitness for individual in population)
 
     return roulette(
         population=population,
-        scaling=lambda individual: get_fitness(individual) / total_fitness
+        scaling=lambda individual: individual.fitness / total_fitness
     )
 
 
 def sigma_scaling(**kwargs):
     population = kwargs.get('population')
 
-    average_fitness = sum(get_fitness(individual) for individual in population) / len(population)
+    average_fitness = sum(individual.fitness for individual in population) / len(population)
     deviation = sqrt(
-        sum((get_fitness(individual) - average_fitness) ** 2 for individual in population) / len(population)
+        sum((individual.fitness - average_fitness) ** 2 for individual in population) / len(population)
     )
 
     def expected_value(individual):
         if deviation == 0:
             return 1
 
-        return 1 + ((get_fitness(individual) - average_fitness) / (2 * deviation))
+        return 1 + ((individual.fitness - average_fitness) / (2 * deviation))
 
     total_expected_value = sum(expected_value(individual) for individual in population)
 
@@ -45,7 +43,7 @@ def tournament_selection(**kwargs):
         if random() < epsilon:
             return choice(group)
 
-        return max(group, key=get_fitness)
+        return max(group, key=lambda individual: individual.fitness)
 
     pairs = []
 

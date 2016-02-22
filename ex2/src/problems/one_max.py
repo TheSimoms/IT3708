@@ -14,16 +14,18 @@ class OneMax(Problem):
         return generate_bit_population(population_size=population_size, genome_size=genome_size)
 
     def fitness_function(self, phenotype, **kwargs):
+        phenotype_size = len(phenotype)
+
         if self.target_phenotype is not None:
             score = 0.0
 
             for i in range(len(phenotype)):
-                if self.target_phenotype[i] == phenotype:
+                if self.target_phenotype[i] == phenotype[i]:
                     score += 1
 
-            return score / len(phenotype)
+            return score / phenotype_size
 
-        return phenotype.count(1) / len(phenotype)
+        return phenotype.count(1) / phenotype_size
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):

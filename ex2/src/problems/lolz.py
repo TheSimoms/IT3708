@@ -13,18 +13,21 @@ class LOLZ(Problem):
         return generate_bit_population(population_size=population_size, genome_size=genome_size)
 
     def fitness_function(self, phenotype, **kwargs):
+        score = 0
         leading_character = phenotype[0]
 
-        for i in range(1, len(phenotype)):
-            if phenotype[i] != leading_character:
-                score = i
+        phenotype_size = len(phenotype)
 
-                if leading_character == 0 and score > kwargs['z']:
-                    score = kwargs['z']
+        for bit in phenotype:
+            if bit != leading_character:
+                break
 
-                return score / len(phenotype)
+            score += 1
 
-        return 1.0
+        if leading_character == 0:
+            score = min(kwargs.get('z'), score)
+
+        return 1 - ((phenotype_size - score) / phenotype_size)
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):

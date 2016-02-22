@@ -1,6 +1,6 @@
 from math import sqrt
 
-from utils import get_fitness, crossover, list_to_string
+from utils import crossover, list_to_string
 
 
 class Individual:
@@ -87,7 +87,7 @@ class EA:
         return children
 
     def __update_logging_data(self, population, best_individual, fitness_data, best_phenotypes):
-        fitness = [get_fitness(individual) for individual in population]
+        fitness = [individual.fitness for individual in population]
         average_fitness = sum(fitness) / self.population_size
 
         fitness_data['best'].append(max(fitness))
@@ -96,7 +96,7 @@ class EA:
         fitness_data['standard_deviation'].append(
             sqrt(
                 sum(
-                    (get_fitness(individual) - average_fitness) ** 2 for individual in population
+                    (individual.fitness - average_fitness) ** 2 for individual in population
                 ) / self.population_size
             )
         )
@@ -118,11 +118,9 @@ class EA:
 
     def __is_simulation_finished(self, generation_number, best_fitness):
         if self.max_number_of_generations is not None and generation_number >= self.max_number_of_generations:
-            if self.log:
-                print('Maximum number of generations reached!')
+            print('Maximum number of generations reached!')
         elif self.target_fitness is not None and best_fitness >= self.target_fitness:
-            if self.log:
-                print('Target fitness reached!')
+            print('Target fitness reached!')
         else:
             return False
 
@@ -151,7 +149,7 @@ class EA:
                 population = self.__generate_adult_population(population, children)
 
                 children = self.__generate_offspring(population)
-                best_individual = max(population, key=get_fitness)
+                best_individual = max(population, key=lambda individual: individual.fitness)
 
                 self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
 

@@ -9,8 +9,8 @@ from problems.surprising_sequences import SurprisingSequences
 
 from utils import generate_bit_individual
 
-from adult_selection_functions import ADULT_SELECTION_FUNCTIONS, full_selection
-from parent_selection_functions import PARENT_SELECTION_FUNCTIONS, tournament_selection
+from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
+from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
 
 
 def get_parameters():
@@ -79,13 +79,13 @@ def plot_results(results):
 
 
 def plot_analysis_results(results, problem_name):
-    plt.plot(results['max'])
-    plt.plot(results['average'])
+    for run in results:
+        plt.plot(run)
 
-    plt.xlabel('Run number')
-    plt.ylabel('Number of generations')
+    plt.xlabel('Generation number')
+    plt.ylabel('Best fitness')
 
-    plt.legend(['Max', 'Average'], loc='lower right')
+    plt.legend(['Run %d' % (i+1) for i in range(len(results))], loc='lower right')
     plt.title('Analysis')
 
     plt.show(problem_name)
@@ -117,55 +117,53 @@ def run_analysis_problem():
     parameters = {
         'problem': problem,
         'parameters': {
-            'group_size': 10,
+            'group_size': 25,
             'epsilon': 0.1
         },
 
-        'population_size': 50,
+        'population_size': 75,
         'genome_size': 40,
 
         'number_of_children': 2,
 
-        'crossover_probability': 0.5,
-        'mutation_probability': 0.5,
+        'crossover_probability': 0.3,
+        'mutation_probability': 0.9,
 
-        'max_number_of_generations': 200,
+        'max_number_of_generations': 100,
         'target_fitness': 1.0,
 
-        'adult_selection_function': full_selection,
-        'parent_selection_function': tournament_selection
+        'adult_selection_function': ADULT_SELECTION_FUNCTIONS[0][1],
+        'parent_selection_function': PARENT_SELECTION_FUNCTIONS[2][1]
     }
 
     if problem_name == 'one-max':
         if get_boolean_parameter('Random vector'):
             problem.target_phenotype = problem.genome_to_phenotype(generate_bit_individual(parameters['genome_size']))
+
+        number_of_runs = 10
     elif problem_name == 'lolz':
-        parameters['target_fitness'] = None
+        parameters['max_number_of_generations'] = 100
         parameters['parameters'].update({
             'z': 21
         })
+        number_of_runs = 10
     else:
-        pass
+        number_of_runs = 10
 
-    number_of_generations = {
-        'max': [],
-        'average': []
-    }
+    fitness_results = []
 
-    for i in range(50):
+    for i in range(number_of_runs):
         try:
             print('Run: %d' % i)
 
             run_results = EA(parameters, log=False).run()
 
-            number_of_generations['max'].append(run_results.get('generation_number'))
+            fitness_results.append(run_results['fitness_data']['best'])
 
         except KeyboardInterrupt:
             break
 
-    number_of_generations['average'] = [sum(number_of_generations['max']) / 50] * 50
-
-    plot_analysis_results(number_of_generations, problem.name)
+    plot_analysis_results(fitness_results, problem.name)
 
 
 def run_analysis():
