@@ -28,6 +28,9 @@ class SurprisingSequences(Problem):
 
                 if sequence in sequences:
                     err += 1
+
+                    if kwargs.get('L') is not None:
+                        return float(j) / kwargs.get('L')
                 else:
                     sequences.add(sequence)
 
@@ -41,7 +44,8 @@ class SurprisingSequences(Problem):
         return tuple(genome)
 
     def represent_phenotype(self, phenotype, **kwargs):
-        return 'S=%d, L=%d, %s' % (kwargs.get('S'), kwargs.get('L'), ', '.join(phenotype))
+        return 'S=%d, L=%d, %s' % (
+            kwargs.get('S'), len(phenotype) if kwargs.get('L') is None else kwargs.get('L'), ', '.join(phenotype))
 
     @staticmethod
     def crossover_function():
@@ -55,6 +59,6 @@ class SurprisingSequences(Problem):
     def extra_parameters():
         return {
             'S': get_numeric_parameter('S', int),
-            'L': get_numeric_parameter('L', int, True),
+            'L': get_numeric_parameter('L', int),
             'isLocal': get_boolean_parameter('Locally surprising')
         }

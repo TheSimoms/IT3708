@@ -1,7 +1,5 @@
 import random
 
-from string import ascii_letters
-
 
 def list_to_string(lst):
     return ''.join(map(str, lst))
@@ -16,7 +14,7 @@ def random_boolean():
 
 
 def random_character(character_set_size):
-    return random.choice(ascii_letters[:character_set_size])
+    return random.choice(range(character_set_size))
 
 
 def random_list_position(lst):
@@ -64,13 +62,13 @@ def generate_bit_population(**kwargs):
 
 
 def generate_string_individual(genome_size, character_set_size):
-    return random_string(genome_size, character_set_size)
+    return random_string(length=genome_size, character_set_size=character_set_size)
 
 
 def generate_string_population(**kwargs):
     return tuple(
         generate_string_individual(
             genome_size=kwargs.get('genome_size'),
-            character_set_size=kwargs.get('character_set_size')
+            character_set_size=kwargs.get('S')
         ) for _ in range(kwargs.get('population_size'))
     )

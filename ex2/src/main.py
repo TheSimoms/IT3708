@@ -153,30 +153,47 @@ def run_analysis_problem():
 
         results = {}
 
-        for S in [3, 5, 10, 15, 20, 40]:
+        for S in [3, 5, 10, 15, 20]:
             parameters['parameters']['S'] = S
             results[S] = None
 
-            number_of_generations_used = parameters['max_number_of_generations'] + 1
+            print('S: %d' % S)
 
-            for genome_size in range(2*S, 15*S):
-                parameters['parameters']['L'] = genome_size
+            genome_size = S
 
-                for run in run_analysis(15, parameters):
-                    if run['best_individual_globally'].fitness == 1.0:
-                        if run['generation_number'] < number_of_generations_used:
-                            results[S] = (
-                                genome_size, run['best_individual_globally'], run['generation_number']
-                            )
+            while True:
+                print('Genome size: %d' % genome_size)
 
-                            number_of_generations_used = run['generation_number']
+                parameters['genome_size'] = genome_size
+                success = False
+
+                for run in range(20):
+                    print('Run: %d' % run)
+
+                    run_results = EA(parameters, log=False).run()
+
+                    if run_results['best_individual_globally'].fitness == 1.0:
+                        results[S] = (
+                            genome_size, run_results['best_individual_globally'], run_results['generation_number']
+                        )
+
+                        success = True
+
+                        break
+
+                if not success:
+                    break
+
+                genome_size += 1
 
         for S in sorted(results.keys()):
-            print('')
-            print(problem.represent_phenotype(
-                phenotype=results[S][1].phenotype, S=S, L=results[S][0]
-            ))
-            print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
+            if results[S] is not None:
+                print('')
+                print('Local search' if parameters['parameters']['isLocal'] else 'Global search')
+                print(problem.represent_phenotype(
+                    phenotype=results[S][1].phenotype, S=S, L=results[S][0]
+                ))
+                print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
 
 
 def run_analysis(number_of_runs, parameters):

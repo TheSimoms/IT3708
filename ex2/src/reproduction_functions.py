@@ -16,19 +16,6 @@ def splice_genome(genome_a, genome_b):
     return genome_a[:splice_position] + genome_b[splice_position:]
 
 
-def component_bit_mutation(**kwargs):
-    return list_to_string(
-        flip_bit(bit) if random_probability(kwargs.get('probability')) else bit for bit in kwargs.get('genome')
-    )
-
-
-def component_string_mutation(**kwargs):
-    return list_to_string(
-        random_character(kwargs.get('length')) if random_probability(kwargs.get('probability')) else character
-        for character in kwargs.get('genome')
-    )
-
-
 def genome_bit_mutation(**kwargs):
     bit_string = list(kwargs.get('genome'))
 
@@ -43,7 +30,7 @@ def genome_string_mutation(**kwargs):
     string = list(kwargs.get('genome'))
 
     if random_probability(kwargs.get('probability')):
-        string[random_list_position(string)] = random_character(kwargs.get('length'))
+        string[random_list_position(string)] = random_character(kwargs.get('S'))
 
     return list_to_string(string)
 

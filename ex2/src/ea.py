@@ -71,9 +71,7 @@ class EA:
 
         for pair in mating_pairs:
             genomes = map(
-                lambda individual: self.problem.mutation_function()(
-                    genome=individual, probability=self.mutation_probability, length=self.genome_size
-                ),
+                lambda genome: self.__mutation_function(genome),
                 crossover(
                     pair,
                     self.crossover_probability,
