@@ -146,8 +146,8 @@ def run_analysis_problem():
             [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
         )
     elif problem.name == 'Surprising sequences':
-        parameters['max_number_of_generations'] = 200
-        parameters['population_size'] = 200
+        parameters['max_number_of_generations'] = 500
+        parameters['population_size'] = 300
 
         parameters['parameters']['isLocal'] = get_boolean_parameter('Local search')
 
@@ -186,10 +186,11 @@ def run_analysis_problem():
 
                 genome_size += 1
 
+        print('\nLocal search' if parameters['parameters']['isLocal'] else 'Global search')
+
         for S in sorted(results.keys()):
             if results[S] is not None:
                 print('')
-                print('Local search' if parameters['parameters']['isLocal'] else 'Global search')
                 print(problem.represent_phenotype(
                     phenotype=results[S][1].phenotype, S=S, L=results[S][0]
                 ))
