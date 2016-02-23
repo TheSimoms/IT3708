@@ -7,7 +7,7 @@ from problems.one_max import OneMax
 from problems.lolz import LOLZ
 from problems.surprising_sequences import SurprisingSequences
 
-from utils import generate_bit_individual
+from utils import generate_bit_individual, list_to_string
 
 from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
@@ -83,7 +83,7 @@ def plot_analysis_results(results, problem_name):
         plt.plot(run)
 
     plt.xlabel('Generation number')
-    plt.ylabel('Best fitness')
+    plt.ylabel('Best results')
 
     plt.legend(['Run %d' % (i+1) for i in range(len(results))], loc='lower right')
     plt.title('Analysis')
@@ -99,20 +99,13 @@ def run_problem():
 
 
 def run_analysis_problem():
-    problem_name = get_choice_parameter(
+    problem = get_choice_parameter(
         'Problem', [
-            ['One-Max', 'one-max', None],
-            ['LOLZ', 'lolz', None],
-            ['Surprising sequences', 'surprising_sequences', None],
+            ['One-Max', 'one-max', OneMax()],
+            ['LOLZ', 'lolz', LOLZ()],
+            ['Surprising sequences', 'surprising_sequences', SurprisingSequences()],
         ]
-    )[0]
-
-    if problem_name == 'one-max':
-        problem = OneMax()
-    elif problem_name == 'lolz':
-        problem = LOLZ()
-    else:
-        problem = SurprisingSequences()
+    )[1]
 
     parameters = {
         'problem': problem,
@@ -136,20 +129,57 @@ def run_analysis_problem():
         'parent_selection_function': PARENT_SELECTION_FUNCTIONS[2][1]
     }
 
-    if problem_name == 'one-max':
+    if problem.name == 'One-Max':
         if get_boolean_parameter('Random vector'):
             problem.target_phenotype = problem.genome_to_phenotype(generate_bit_individual(parameters['genome_size']))
 
-        number_of_runs = 10
-    elif problem_name == 'lolz':
+        plot_analysis_results(
+            [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
+        )
+    elif problem.name == 'LOLZ':
         parameters['max_number_of_generations'] = 100
         parameters['parameters'].update({
             'z': 21
         })
-        number_of_runs = 10
-    else:
-        number_of_runs = 10
 
+        plot_analysis_results(
+            [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
+        )
+    elif problem.name == 'Surprising sequences':
+        parameters['max_number_of_generations'] = 200
+        parameters['population_size'] = 200
+
+        parameters['parameters']['isLocal'] = get_boolean_parameter('Local search')
+
+        results = {}
+
+        for S in [3, 5, 10, 15, 20, 40]:
+            parameters['parameters']['S'] = S
+            results[S] = None
+
+            number_of_generations_used = parameters['max_number_of_generations'] + 1
+
+            for genome_size in range(2*S, 15*S):
+                parameters['parameters']['L'] = genome_size
+
+                for run in run_analysis(15, parameters):
+                    if run['best_individual_globally'].fitness == 1.0:
+                        if run['generation_number'] < number_of_generations_used:
+                            results[S] = (
+                                genome_size, run['best_individual_globally'], run['generation_number']
+                            )
+
+                            number_of_generations_used = run['generation_number']
+
+        for S in sorted(results.keys()):
+            print('')
+            print(problem.represent_phenotype(
+                phenotype=results[S][1].phenotype, S=S, L=results[S][0]
+            ))
+            print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
+
+
+def run_analysis(number_of_runs, parameters):
     fitness_results = []
 
     for i in range(number_of_runs):
@@ -158,23 +188,19 @@ def run_analysis_problem():
 
             run_results = EA(parameters, log=False).run()
 
-            fitness_results.append(run_results['fitness_data']['best'])
+            fitness_results.append(run_results)
 
         except KeyboardInterrupt:
             break
 
-    plot_analysis_results(fitness_results, problem.name)
-
-
-def run_analysis():
-    run_analysis_problem()
+    return fitness_results
 
 
 def main():
     analysis = get_boolean_parameter('Run analysis')
 
     if analysis:
-        run_analysis()
+        run_analysis_problem()
     else:
         run_problem()
 

@@ -139,7 +139,9 @@ class EA:
 
         population = []
         children = self.__initialize()
-        best_individual = None
+
+        best_individual_locally = None
+        best_individual_globally = None
 
         while True:
             try:
@@ -147,16 +149,18 @@ class EA:
                 self.__generate_fitness_values(children)
 
                 population = self.__generate_adult_population(population, children)
-
                 children = self.__generate_offspring(population)
-                best_individual = max(population, key=lambda individual: individual.fitness)
 
-                self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
+                best_individual_locally = max(population, key=lambda individual: individual.fitness)
+                best_individual_globally = best_individual_locally if best_individual_globally is None else max(
+                    best_individual_globally, best_individual_locally, key=lambda individual: individual.fitness)
+
+                self.__update_logging_data(population, best_individual_locally, fitness_data, best_phenotypes)
 
                 if self.log:
                     self.__log(generation_number, fitness_data, best_phenotypes)
 
-                if self.__is_simulation_finished(generation_number, best_individual.fitness):
+                if self.__is_simulation_finished(generation_number, best_individual_locally.fitness):
                     break
 
                 generation_number += 1
@@ -166,7 +170,8 @@ class EA:
         return {
             'generation_number': generation_number,
             'population': population,
-            'best_individual': best_individual,
+            'best_individual': best_individual_locally,
+            'best_individual_globally': best_individual_globally,
             'fitness_data': fitness_data,
             'best_phenotypes': best_phenotypes,
             'problem': self.problem

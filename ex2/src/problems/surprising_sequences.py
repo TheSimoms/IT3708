@@ -18,21 +18,23 @@ class SurprisingSequences(Problem):
 
     def fitness_function(self, phenotype, **kwargs):
         length = len(phenotype)
-        sequences = []
+
+        sequences = set()
+        err = 0
 
         for i in range(length - 1):
             for j in range(i + 1, length):
-                sequences.append('%s%s%s' % (phenotype[i], j - i - 1, phenotype[j]))
+                sequence = '%s%s%s' % (phenotype[i], j - i - 1, phenotype[j])
+
+                if sequence in sequences:
+                    err += 1
+                else:
+                    sequences.add(sequence)
 
                 if kwargs.get('isLocal'):
                     break
 
-        number_of_unique_sequences = len(set(sequences)) - 1
-
-        if kwargs.get('L'):
-            return number_of_unique_sequences / kwargs.get('L')
-        else:
-            return number_of_unique_sequences / (len(sequences) - 1)
+        return 1.0 / (1.0 + err)
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):
