@@ -18,26 +18,16 @@ class SurprisingSequences(Problem):
 
     def fitness_function(self, phenotype, **kwargs):
         length = len(phenotype)
-
-        sequences = set()
-        err = 0
+        sequences = []
 
         for i in range(length - 1):
             for j in range(i + 1, length):
-                sequence = '%s%s%s' % (phenotype[i], j - i - 1, phenotype[j])
-
-                if sequence in sequences:
-                    err += 1
-
-                    if kwargs.get('L') is not None:
-                        return float(j) / kwargs.get('L')
-                else:
-                    sequences.add(sequence)
+                sequences.append('%s%s%s' % (phenotype[i], j - i - 1, phenotype[j]))
 
                 if kwargs.get('isLocal'):
                     break
 
-        return 1.0 / (1.0 + err)
+        return len(set(sequences)) / len(sequences)
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):
@@ -45,7 +35,7 @@ class SurprisingSequences(Problem):
 
     def represent_phenotype(self, phenotype, **kwargs):
         return 'S=%d, L=%d, %s' % (
-            kwargs.get('S'), len(phenotype) if kwargs.get('L') is None else kwargs.get('L'), ', '.join(phenotype))
+            kwargs.get('S'), len(phenotype), ', '.join(phenotype))
 
     @staticmethod
     def crossover_function():
@@ -59,6 +49,5 @@ class SurprisingSequences(Problem):
     def extra_parameters():
         return {
             'S': get_numeric_parameter('S', int),
-            'L': get_numeric_parameter('L', int),
             'isLocal': get_boolean_parameter('Locally surprising')
         }

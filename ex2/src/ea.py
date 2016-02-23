@@ -18,8 +18,6 @@ class EA:
         self.population_size = parameters.get('population_size')
         self.genome_size = parameters.get('genome_size')
 
-        self.number_of_children = parameters.get('number_of_children')
-
         self.crossover_probability = parameters.get('crossover_probability')
         self.mutation_probability = parameters.get('mutation_probability')
 
@@ -75,8 +73,7 @@ class EA:
                 crossover(
                     pair,
                     self.crossover_probability,
-                    self.problem.crossover_function(),
-                    self.number_of_children
+                    self.problem.crossover_function()
                 )
             )
 

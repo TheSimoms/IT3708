@@ -7,7 +7,7 @@ from problems.one_max import OneMax
 from problems.lolz import LOLZ
 from problems.surprising_sequences import SurprisingSequences
 
-from utils import generate_bit_individual, list_to_string
+from utils import generate_bit_individual
 
 from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
@@ -19,8 +19,6 @@ def get_parameters():
 
         'population_size': get_numeric_parameter('Population size', int),
         'genome_size': get_numeric_parameter('Genome size', int),
-
-        'number_of_children': get_numeric_parameter('Number of children from mating', int),
 
         'crossover_probability': get_numeric_parameter('Crossover probability', float),
         'mutation_probability': get_numeric_parameter('Mutation probability', float),
@@ -117,8 +115,6 @@ def run_analysis_problem():
         'population_size': 75,
         'genome_size': 40,
 
-        'number_of_children': 2,
-
         'crossover_probability': 0.3,
         'mutation_probability': 0.9,
 
@@ -146,8 +142,8 @@ def run_analysis_problem():
             [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
         )
     elif problem.name == 'Surprising sequences':
-        parameters['max_number_of_generations'] = 500
-        parameters['population_size'] = 300
+        parameters['max_number_of_generations'] = 1000
+        parameters['population_size'] = 200
 
         parameters['parameters']['isLocal'] = get_boolean_parameter('Local search')
 
@@ -157,24 +153,25 @@ def run_analysis_problem():
             parameters['parameters']['S'] = S
             results[S] = None
 
-            print('S: %d' % S)
+            print('\nS: %d' % S)
 
-            genome_size = S
+            L = S
 
             while True:
-                print('Genome size: %d' % genome_size)
+                print('L: %d' % L)
 
-                parameters['genome_size'] = genome_size
+                parameters['genome_size'] = L
+
                 success = False
 
-                for run in range(20):
+                for run in range(15):
                     print('Run: %d' % run)
 
                     run_results = EA(parameters, log=False).run()
 
-                    if run_results['best_individual_globally'].fitness == 1.0:
+                    if run_results['best_individual_globally'].fitness >= 1.0:
                         results[S] = (
-                            genome_size, run_results['best_individual_globally'], run_results['generation_number']
+                            run_results['best_individual_globally'], L, run_results['generation_number']
                         )
 
                         success = True
@@ -184,7 +181,7 @@ def run_analysis_problem():
                 if not success:
                     break
 
-                genome_size += 1
+                L += 1
 
         print('\nLocal search' if parameters['parameters']['isLocal'] else 'Global search')
 
@@ -192,7 +189,7 @@ def run_analysis_problem():
             if results[S] is not None:
                 print('')
                 print(problem.represent_phenotype(
-                    phenotype=results[S][1].phenotype, S=S, L=results[S][0]
+                    phenotype=results[S][0].phenotype, S=S, L=results[S][1]
                 ))
                 print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
 

@@ -1,5 +1,7 @@
 import random
 
+from string import ascii_letters
+
 
 def list_to_string(lst):
     return ''.join(map(str, lst))
@@ -14,7 +16,7 @@ def random_boolean():
 
 
 def random_character(character_set_size):
-    return random.choice(range(character_set_size))
+    return random.choice(ascii_letters[:character_set_size])
 
 
 def random_list_position(lst):
@@ -29,12 +31,12 @@ def random_bits(length):
     return list_to_string(str(random.getrandbits(1)) for _ in range(length))
 
 
-def crossover(pair, crossover_probability, crossover_function, number_of_children=2):
+def crossover(pair, crossover_probability, crossover_function):
     genome_a, genome_b = pair[0].genome, pair[1].genome
 
     children = []
 
-    for _ in range(number_of_children):
+    for _ in range(2):
         if random_probability(crossover_probability):
             children.append(genome_a if random_boolean() else genome_b)
         else:
