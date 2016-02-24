@@ -1,13 +1,17 @@
-from utils import generate_bit_population, bit_string_to_ints, list_to_string
+from utils import generate_bit_population, generate_bit_individual, bit_string_to_ints, list_to_string
 from problem import Problem
+from parameters import get_boolean_parameter
 from reproduction_functions import mix_genome, genome_bit_mutation
 
 
 class OneMax(Problem):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__('One-Max')
 
-        self.target_phenotype = None
+        if kwargs['parameters']['random_vector']:
+            self.target_phenotype = self.genome_to_phenotype(generate_bit_individual(kwargs['genome_size']))
+        else:
+            self.target_phenotype = [1] * kwargs['genome_size']
 
     @staticmethod
     def generate_population(population_size, genome_size, **kwargs):
@@ -16,16 +20,7 @@ class OneMax(Problem):
     def fitness_function(self, phenotype, **kwargs):
         phenotype_size = len(phenotype)
 
-        if self.target_phenotype is not None:
-            score = 0.0
-
-            for i in range(len(phenotype)):
-                if self.target_phenotype[i] == phenotype[i]:
-                    score += 1
-
-            return score / phenotype_size
-
-        return phenotype.count(1) / phenotype_size
+        return sum(self.target_phenotype[i] == phenotype[i] for i in range(phenotype_size)) / phenotype_size
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):
@@ -39,5 +34,12 @@ class OneMax(Problem):
         return mix_genome
 
     @staticmethod
-    def mutation_function():
-        return genome_bit_mutation
+    def mutation_function(**kwargs):
+        return genome_bit_mutation(**kwargs)
+
+    @staticmethod
+    def extra_parameters():
+        return {
+            'random_vector': get_boolean_parameter('Random target vector')
+        }
+

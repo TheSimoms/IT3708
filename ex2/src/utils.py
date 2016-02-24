@@ -12,7 +12,7 @@ def random_probability(p):
 
 
 def random_boolean():
-    return bool(random.getrandbits(1))
+    return random.getrandbits(1)
 
 
 def random_character(character_set_size):
@@ -38,9 +38,9 @@ def crossover(pair, crossover_probability, crossover_function):
 
     for _ in range(2):
         if random_probability(crossover_probability):
-            children.append(genome_a if random_boolean() else genome_b)
-        else:
             children.append(crossover_function(genome_a, genome_b))
+        else:
+            children.append(genome_a if random_boolean() else genome_b)
 
     return tuple(children)
 

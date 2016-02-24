@@ -1,5 +1,5 @@
 class Problem:
-    def __init__(self, name):
+    def __init__(self, name, **kwargs):
         self.name = name
 
     @staticmethod

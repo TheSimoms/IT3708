@@ -5,7 +5,7 @@ from parameters import get_numeric_parameter
 
 
 class LOLZ(Problem):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__('LOLZ')
 
     @staticmethod
@@ -41,8 +41,8 @@ class LOLZ(Problem):
         return mix_genome
 
     @staticmethod
-    def mutation_function():
-        return genome_bit_mutation
+    def mutation_function(**kwargs):
+        return genome_bit_mutation(**kwargs)
 
     @staticmethod
     def extra_parameters():

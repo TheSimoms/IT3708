@@ -5,7 +5,7 @@ from parameters import get_numeric_parameter, get_boolean_parameter
 
 
 class SurprisingSequences(Problem):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__('Surprising sequences')
 
     @staticmethod
@@ -42,8 +42,8 @@ class SurprisingSequences(Problem):
         return splice_genome
 
     @staticmethod
-    def mutation_function():
-        return genome_string_mutation
+    def mutation_function(**kwargs):
+        return genome_string_mutation(**kwargs)
 
     @staticmethod
     def extra_parameters():

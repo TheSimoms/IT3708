@@ -59,7 +59,7 @@ class EA:
         )
 
     def __mutation_function(self, genome):
-        return self.problem.mutation_function()(
+        return self.problem.mutation_function(
             genome=genome, probability=self.mutation_probability, **self.parameters
         )
 
@@ -135,8 +135,7 @@ class EA:
         population = []
         children = self.__initialize()
 
-        best_individual_locally = None
-        best_individual_globally = None
+        best_individual = None
 
         while True:
             try:
@@ -144,18 +143,17 @@ class EA:
                 self.__generate_fitness_values(children)
 
                 population = self.__generate_adult_population(population, children)
+
+                best_individual = max(population, key=lambda individual: individual.fitness)
+
                 children = self.__generate_offspring(population)
 
-                best_individual_locally = max(population, key=lambda individual: individual.fitness)
-                best_individual_globally = best_individual_locally if best_individual_globally is None else max(
-                    best_individual_globally, best_individual_locally, key=lambda individual: individual.fitness)
-
-                self.__update_logging_data(population, best_individual_locally, fitness_data, best_phenotypes)
+                self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
 
                 if self.log:
                     self.__log(generation_number, fitness_data, best_phenotypes)
 
-                if self.__is_simulation_finished(generation_number, best_individual_locally.fitness):
+                if self.__is_simulation_finished(generation_number, best_individual.fitness):
                     break
 
                 generation_number += 1
@@ -165,8 +163,7 @@ class EA:
         return {
             'generation_number': generation_number,
             'population': population,
-            'best_individual': best_individual_locally,
-            'best_individual_globally': best_individual_globally,
+            'best_individual': best_individual,
             'fitness_data': fitness_data,
             'best_phenotypes': best_phenotypes,
             'problem': self.problem

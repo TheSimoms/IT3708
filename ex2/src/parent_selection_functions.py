@@ -5,11 +5,10 @@ from utils import random_probability
 
 
 def fitness_proportionate(**kwargs):
-    population = kwargs.get('population')
-    total_fitness = sum(individual.fitness for individual in population)
+    total_fitness = sum(individual.fitness for individual in kwargs.get('population'))
 
     return roulette(
-        population=population,
+        population=kwargs.get('population'),
         scaling=lambda individual: individual.fitness / total_fitness
     )
 
@@ -49,7 +48,7 @@ def tournament_selection(**kwargs):
 
     pairs = []
 
-    for _ in range(len(population) // 2):
+    while len(pairs) < len(population) / 2:
         tournament_pool = list(population)
 
         tournament_group = sample(tournament_pool, group_size)
@@ -78,7 +77,7 @@ def roulette(population, scaling):
     def roll():
         roulette_candidates = sorted(
             list((individual, scaling(individual)) for individual in roulette_pool),
-            key=lambda individual: individual[1]
+            key=lambda x: x[1]
         )
 
         roulette_wheel = dict()
@@ -102,12 +101,7 @@ def roulette(population, scaling):
 
         return pair
 
-    pairs = []
-
-    for _ in range(len(population) // 2):
-        pairs.append(roll())
-
-    return pairs
+    return [roll() for _ in range(len(population) // 2)]
 
 
 PARENT_SELECTION_FUNCTIONS = [

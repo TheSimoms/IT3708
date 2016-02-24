@@ -7,8 +7,6 @@ from problems.one_max import OneMax
 from problems.lolz import LOLZ
 from problems.surprising_sequences import SurprisingSequences
 
-from utils import generate_bit_individual
-
 from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
 
@@ -47,46 +45,50 @@ def get_parameters():
 
     problem = get_choice_parameter(
         'Problem', [
-            ['One-Max', OneMax(), None],
-            ['LOLZ', LOLZ(), None],
-            ['Surprising sequences', SurprisingSequences(), None],
+            ['One-Max', OneMax, None],
+            ['LOLZ', LOLZ, None],
+            ['Surprising sequences', SurprisingSequences, None],
         ]
     )[0]
 
-    parameters['problem'] = problem
     parameters['parameters'].update(problem.extra_parameters())
+    parameters['problem'] = problem(**parameters)
 
     print('')
 
     return parameters
 
 
-def plot_results(results):
-    plt.plot(results['fitness_data']['best'])
-    plt.plot(results['fitness_data']['worst'])
-    plt.plot(results['fitness_data']['average'])
-    plt.plot(results['fitness_data']['standard_deviation'])
+def make_plot(data, title, x_axis_name, y_axis_name):
+    plot = plt.subplot(111)
 
-    plt.xlabel('Generation number')
-    plt.ylabel('Fitness')
+    for i in range(len(data)):
+        plot.plot(range(len(data[i])), data[i], label='Run: %d' % (i+1))
 
-    plt.legend(['Best', 'Worst', 'Average', 'Standard deviation'], loc='lower right')
-    plt.title(results['problem'].name)
+    plt.title(title)
+
+    plt.xlabel(x_axis_name)
+    plt.ylabel(y_axis_name)
+
+    box = plot.get_position()
+    plot.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    plot.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     plt.show()
 
 
+def plot_results(results):
+    make_plot([
+        results['fitness_data']['best'],
+        results['fitness_data']['worst'],
+        results['fitness_data']['average'],
+        results['fitness_data']['standard_deviation'],
+    ], results['problem'].name, 'Generation_number', 'Fitness')
+
+
 def plot_analysis_results(results, problem_name):
-    for run in results:
-        plt.plot(run)
-
-    plt.xlabel('Generation number')
-    plt.ylabel('Best results')
-
-    plt.legend(['Run %d' % (i+1) for i in range(len(results))], loc='lower right')
-    plt.title('Analysis')
-
-    plt.show(problem_name)
+    make_plot(results, problem_name, 'Generation number', 'Max fitness')
 
 
 def run_problem():
@@ -96,26 +98,87 @@ def run_problem():
     plot_results(ea.run())
 
 
-def run_analysis_problem():
-    problem = get_choice_parameter(
-        'Problem', [
-            ['One-Max', 'one-max', OneMax()],
-            ['LOLZ', 'lolz', LOLZ()],
-            ['Surprising sequences', 'surprising_sequences', SurprisingSequences()],
-        ]
-    )[1]
+def run_one_max_analysis(problem, parameters):
+    plot_analysis_results(
+        [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
+    )
 
+
+def run_lolz_analysis(problem, parameters):
+    parameters['max_number_of_generations'] = 100
+    parameters['parameters'].update({
+        'z': 21
+    })
+
+    plot_analysis_results(
+        [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
+    )
+
+
+def run_surprising_sequences_analysis(problem, parameters):
+    parameters['max_number_of_generations'] = 1000
+    parameters['population_size'] = 200
+
+    parameters['parameters']['isLocal'] = get_boolean_parameter('Local search')
+
+    results = {}
+
+    for S in [3, 5, 10, 15, 20]:
+        parameters['parameters']['S'] = S
+        results[S] = None
+
+        print('\nS: %d' % S)
+
+        L = S
+
+        while True:
+            print('L: %d' % L)
+
+            parameters['genome_size'] = L
+
+            success = False
+
+            for run in range(15):
+                print('Run: %d' % run)
+
+                run_results = EA(parameters, log=False).run()
+
+                if run_results['best_individual'].fitness >= 1.0:
+                    results[S] = (
+                        run_results['best_individual'], L, run_results['generation_number']
+                    )
+
+                    success = True
+
+                    break
+
+            if not success:
+                break
+
+            L += 1
+
+    print('\nLocal search' if parameters['parameters']['isLocal'] else 'Global search')
+
+    for S in sorted(results.keys()):
+        if results[S] is not None:
+            print('')
+            print(problem.represent_phenotype(
+                phenotype=results[S][0].phenotype, S=S, L=results[S][1]
+            ))
+            print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
+
+
+def run_analysis_problem():
     parameters = {
-        'problem': problem,
         'parameters': {
-            'group_size': 25,
+            'group_size': 50,
             'epsilon': 0.1
         },
 
         'population_size': 75,
         'genome_size': 40,
 
-        'crossover_probability': 0.3,
+        'crossover_probability': 0.7,
         'mutation_probability': 0.9,
 
         'max_number_of_generations': 100,
@@ -125,73 +188,26 @@ def run_analysis_problem():
         'parent_selection_function': PARENT_SELECTION_FUNCTIONS[2][1]
     }
 
-    if problem.name == 'One-Max':
-        if get_boolean_parameter('Random vector'):
-            problem.target_phenotype = problem.genome_to_phenotype(generate_bit_individual(parameters['genome_size']))
+    problem_name, problem = get_choice_parameter(
+        'Problem', [
+            ['One-Max', 'one-max', OneMax],
+            ['LOLZ', 'lolz', LOLZ],
+            ['Surprising sequences', 'surprising_sequences', SurprisingSequences],
+        ]
+    )
 
-        plot_analysis_results(
-            [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
-        )
-    elif problem.name == 'LOLZ':
-        parameters['max_number_of_generations'] = 100
-        parameters['parameters'].update({
-            'z': 21
-        })
+    parameters['parameters'].update(problem.extra_parameters())
 
-        plot_analysis_results(
-            [results['fitness_data']['best'] for results in run_analysis(10, parameters)], problem.name
-        )
-    elif problem.name == 'Surprising sequences':
-        parameters['max_number_of_generations'] = 1000
-        parameters['population_size'] = 200
+    problem = problem(**parameters)
 
-        parameters['parameters']['isLocal'] = get_boolean_parameter('Local search')
+    parameters['problem'] = problem
 
-        results = {}
-
-        for S in [3, 5, 10, 15, 20]:
-            parameters['parameters']['S'] = S
-            results[S] = None
-
-            print('\nS: %d' % S)
-
-            L = S
-
-            while True:
-                print('L: %d' % L)
-
-                parameters['genome_size'] = L
-
-                success = False
-
-                for run in range(15):
-                    print('Run: %d' % run)
-
-                    run_results = EA(parameters, log=False).run()
-
-                    if run_results['best_individual_globally'].fitness >= 1.0:
-                        results[S] = (
-                            run_results['best_individual_globally'], L, run_results['generation_number']
-                        )
-
-                        success = True
-
-                        break
-
-                if not success:
-                    break
-
-                L += 1
-
-        print('\nLocal search' if parameters['parameters']['isLocal'] else 'Global search')
-
-        for S in sorted(results.keys()):
-            if results[S] is not None:
-                print('')
-                print(problem.represent_phenotype(
-                    phenotype=results[S][0].phenotype, S=S, L=results[S][1]
-                ))
-                print('Population size: %d, number of generations: %d' % (parameters['population_size'], results[S][2]))
+    if problem_name == 'one-max':
+        run_one_max_analysis(problem, parameters)
+    elif problem_name == 'lolz':
+        run_lolz_analysis(problem, parameters)
+    elif problem_name == 'surprising_sequences':
+        run_surprising_sequences_analysis(problem, parameters)
 
 
 def run_analysis(number_of_runs, parameters):
