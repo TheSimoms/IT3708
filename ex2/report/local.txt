@@ -1,0 +1,14 @@
+S=3, L=10, a, a, b, a, c, b, b, c, c, a
+Population size: 200, number of generations: 1
+
+S=5, L=26, b, b, e, e, d, d, e, c, d, b, c, c, a, b, d, c, b, a, d, a, c, e, a, a, e, b
+Population size: 200, number of generations: 48
+
+S=10, L=101, a, b, e, e, f, g, j, c, c, b, g, f, e, j, d, e, c, i, d, h, g, g, d, a, f, i, j, g, i, c, g, h, a, c, j, b, f, c, a, e, i, e, g, e, b, b, i, b, a, g, c, e, d, b, h, i, f, b, c, d, i, h, e, a, a, j, j, f, j, h, f, a, h, c, h, j, i, a, i, i, g, b, j, e, h, h, d, c, f, f, h, b, d, d, j, a, d, f, d, g, a
+Population size: 200, number of generations: 80
+
+S=15, L=225, m, b, h, b, n, c, g, n, i, l, k, h, n, n, h, c, i, k, k, c, j, j, a, j, l, e, l, o, b, l, a, g, h, i, a, b, k, m, e, g, e, c, b, o, o, i, d, a, m, o, m, m, h, g, m, l, c, f, a, h, k, j, o, h, o, f, l, d, g, b, g, i, i, j, c, e, a, o, g, d, l, i, f, e, b, b, j, k, n, d, d, c, c, a, i, e, f, h, l, b, a, a, f, m, i, o, a, e, e, o, c, m, j, e, d, m, a, d, f, g, j, i, n, f, f, o, k, d, b, m, g, k, l, h, d, k, o, n, b, d, i, b, e, i, g, g, a, k, i, m, k, f, i, c, k, g, o, e, j, h, a, c, l, m, f, d, o, l, n, g, l, l, g, c, d, e, n, e, k, e, m, c, h, h, j, f, j, b, f, k, a, l, f, b, i, h, m, n, j, g, f, n, m, d, h, e, h, f, c, n, a, n, o, d, n, k, b, c, o, j, n, l, j, d, j
+Population size: 200, number of generations: 438
+
+S=20, L=390, c, n, s, i, o, s, j, c, p, o, c, k, e, t, n, n, q, t, k, o, e, h, a, n, j, g, g, d, p, r, s, n, t, s, b, n, c, l, f, j, t, m, e, a, b, f, n, k, d, c, f, b, d, b, c, h, p, k, r, b, g, j, e, c, m, r, j, d, o, o, i, a, p, f, r, e, f, g, l, i, t, q, s, c, o, n, b, i, p, p, d, m, m, n, p, h, e, b, e, q, h, s, a, j, i, g, a, o, m, b, m, j, f, a, d, a, k, m, o, h, g, n, l, q, p, t, h, k, h, q, i, m, d, h, c, s, e, n, a, s, m, c, b, p, q, c, e, j, r, f, q, q, a, g, h, r, c, c, a, t, e, r, h, d, g, e, m, q, k, c, i, l, d, t, o, t, b, k, t, i, d, n, h, i, q, d, r, r, n, d, d, s, f, o, k, k, p, s, g, k, q, f, h, f, s, p, j, q, n, g, m, f, l, n, m, p, a, f, c, d, e, k, n, r, l, r, p, m, s, s, t, t, l, l, s, o, b, l, g, c, j, p, e, e, i, s, r, g, q, o, r, q, b, a, l, h, j, a, a, e, p, l, a, c, g, s, h, t, r, m, g, o, q, r, o, j, b, t, f, i, f, f, m, a, r, k, l, b, s, q, e, s, d, q, m, l, o, a, h, o, p, c, q, j, o, d, f, e, g, i, i, b, b, h, b, j, m, i, r, d, j, l, e, l, m, t, d, l, t, g, p, g, f, p, b, r, i, c, t, a, q, l, k, b, q, g, b, o, l, j, s, k, f, k, a, m, k, i, n, i, h, m, h, l, p, n, e, d, i, j, n, f, d, k, s, l, c, r, t, j, j, k, g, r, a, i, e, o, f, t
+Population size: 200, number of generations: 740

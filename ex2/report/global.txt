@@ -1,0 +1,14 @@
+S=3, L=7, b, c, a, a, b, a, c
+Population size: 200, number of generations: 0
+
+S=5, L=12, e, b, c, d, c, a, a, d, b, e, c, b
+Population size: 200, number of generations: 9
+
+S=10, L=25, i, h, j, g, e, c, e, b, g, d, a, c, c, f, i, b, h, f, j, d, g, a, d, i, e
+Population size: 200, number of generations: 99
+
+S=15, L=39, o, c, d, n, k, b, l, f, a, h, j, n, j, f, m, g, i, m, c, l, a, e, e, d, h, b, g, a, k, o, i, g, d, o, n, f, c, j, k
+Population size: 200, number of generations: 306
+
+S=20, L=51, f, c, n, r, k, j, l, o, l, a, t, e, i, h, d, p, s, c, g, q, q, o, m, k, d, s, g, a, s, n, p, b, i, j, f, b, p, h, r, m, n, e, t, c, h, l, j, d, k, a, o
+Population size: 200, number of generations: 25
