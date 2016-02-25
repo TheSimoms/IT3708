@@ -81,7 +81,7 @@ def make_plot(data, title, x_axis_name, y_axis_name, file_name=None):
     plot = plt.subplot(111)
 
     for i in range(len(data)):
-        plot.plot(range(len(data[i])), data[i], label='Run: %d' % (i+1))
+        plot.plot(range(len(data[i][0])), data[i][0], label=data[i][1])
 
     plt.title(title)
 

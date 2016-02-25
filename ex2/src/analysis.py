@@ -195,4 +195,9 @@ def run_analysis(number_of_runs, parameters):
 
 
 def plot_analysis_results(results, problem_name, file_name):
-    make_plot(results, problem_name, 'Generation number', 'Max fitness', file_name)
+    data = []
+
+    for i in range(len(results)):
+        data.append((results[i], 'Run %d' % (i+1)))
+
+    make_plot(data, problem_name, 'Generation number', 'Max fitness', file_name)

@@ -62,11 +62,11 @@ def get_parameters():
 
 def plot_results(results):
     make_plot([
-        results['fitness_data']['best'],
-        results['fitness_data']['worst'],
-        results['fitness_data']['average'],
-        results['fitness_data']['standard_deviation'],
-    ], results['problem'].name, 'Generation_number', 'Fitness')
+        (results['fitness_data']['best'], 'Best'),
+        (results['fitness_data']['worst'], 'Worst'),
+        (results['fitness_data']['average'], 'Average'),
+        (results['fitness_data']['standard_deviation'], 'Standard deviation'),
+    ], results['problem'].name, 'Generation number', 'Fitness')
 
 
 def run_problem():
