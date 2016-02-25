@@ -8,10 +8,7 @@ class OneMax(Problem):
     def __init__(self, **kwargs):
         super().__init__('One-Max')
 
-        if kwargs['parameters']['random_vector']:
-            self.target_phenotype = self.genome_to_phenotype(generate_bit_individual(kwargs['genome_size']))
-        else:
-            self.target_phenotype = [1] * kwargs['genome_size']
+        self.target_phenotype = [1] * kwargs['genome_size']
 
     @staticmethod
     def generate_population(population_size, genome_size, **kwargs):
@@ -36,10 +33,3 @@ class OneMax(Problem):
     @staticmethod
     def mutation_function(**kwargs):
         return genome_bit_mutation(**kwargs)
-
-    @staticmethod
-    def extra_parameters():
-        return {
-            'random_vector': get_boolean_parameter('Random target vector')
-        }
-

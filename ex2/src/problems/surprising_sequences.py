@@ -27,7 +27,7 @@ class SurprisingSequences(Problem):
                 if kwargs.get('isLocal'):
                     break
 
-        return len(set(sequences)) / len(sequences)
+        return (len(set(sequences)) - 1) / (len(sequences) - 1)
 
     @staticmethod
     def genome_to_phenotype(genome, **kwargs):

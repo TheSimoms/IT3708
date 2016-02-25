@@ -1,6 +1,6 @@
 from math import sqrt
 
-from utils import crossover, list_to_string
+from utils import crossover
 
 
 class Individual:

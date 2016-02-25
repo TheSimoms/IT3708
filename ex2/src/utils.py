@@ -1,4 +1,5 @@
 import random
+import matplotlib.pyplot as plt
 
 from string import ascii_letters
 
@@ -74,3 +75,27 @@ def generate_string_population(**kwargs):
             character_set_size=kwargs.get('S')
         ) for _ in range(kwargs.get('population_size'))
     )
+
+
+def make_plot(data, title, x_axis_name, y_axis_name, file_name=None):
+    plot = plt.subplot(111)
+
+    for i in range(len(data)):
+        plot.plot(range(len(data[i])), data[i], label='Run: %d' % (i+1))
+
+    plt.title(title)
+
+    plt.xlabel(x_axis_name)
+    plt.ylabel(y_axis_name)
+
+    box = plot.get_position()
+    plot.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    plot.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    if file_name is not None:
+        plt.savefig('../report/images/tmp/%s.png' % file_name)
+    else:
+        plt.show()
+
+    plt.clf()

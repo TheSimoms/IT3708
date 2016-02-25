@@ -11,7 +11,7 @@ def splice_genome(genome_a, genome_b):
     if random_boolean():
         genome_a, genome_b = genome_b, genome_a
 
-    splice_position = random_list_position(genome_a + [])
+    splice_position = random_list_position(genome_a) + random_boolean()
 
     return genome_a[:splice_position] + genome_b[splice_position:]
 
