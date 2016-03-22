@@ -154,7 +154,9 @@ def run_analysis_problem():
         'target_fitness': 1.0,
 
         'adult_selection_function': ADULT_SELECTION_FUNCTIONS[0][1],
-        'parent_selection_function': PARENT_SELECTION_FUNCTIONS[2][1]
+        'parent_selection_function': PARENT_SELECTION_FUNCTIONS[2][1],
+
+        'elitism_number': 0
     }
 
     problem_name, problem = get_choice_parameter(

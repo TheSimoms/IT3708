@@ -27,6 +27,8 @@ class EA:
         self.max_number_of_generations = parameters.get('max_number_of_generations')
         self.target_fitness = parameters.get('target_fitness')
 
+        self.elitism_number = parameters.get('elitism_number')
+
         self.log = log
 
     def __initialize(self):
@@ -64,8 +66,11 @@ class EA:
         )
 
     def __generate_offspring(self, population):
+        # Generate mating pairs
         mating_pairs = self.__generate_parents(population)
-        children = []
+
+        # Add best individuals to the child pool (elitism)
+        children = sorted(population, key=lambda individual: individual.fitness, reverse=True)[:self.elitism_number]
 
         for pair in mating_pairs:
             genomes = map(
@@ -79,7 +84,7 @@ class EA:
 
             children.extend(Individual(genome) for genome in genomes)
 
-        return children
+        return children[:self.population_size]
 
     def __update_logging_data(self, population, best_individual, fitness_data, best_phenotypes):
         fitness = [individual.fitness for individual in population]
@@ -136,6 +141,7 @@ class EA:
         children = self.__initialize()
 
         best_individual = None
+        best_run_individual = None
 
         while True:
             try:
@@ -145,6 +151,9 @@ class EA:
                 population = self.__generate_adult_population(population, children)
 
                 best_individual = max(population, key=lambda individual: individual.fitness)
+                best_run_individual = max(
+                    (best_individual, best_run_individual), key=lambda individual: individual.fitness
+                ) if best_run_individual is not None else best_individual
 
                 children = self.__generate_offspring(population)
 
@@ -164,6 +173,7 @@ class EA:
             'generation_number': generation_number,
             'population': population,
             'best_individual': best_individual,
+            'best_run_individual': best_run_individual,
             'fitness_data': fitness_data,
             'best_phenotypes': best_phenotypes,
             'problem': self.problem

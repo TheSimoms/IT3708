@@ -24,6 +24,8 @@ def get_parameters():
 
         'max_number_of_generations': get_numeric_parameter('Maximum number of generations', int, True),
         'target_fitness': 1.0,
+
+        'elitism_number': 1.0,
     }
 
     adult_selection_function, adult_selection_function_parameters = get_choice_parameter(
