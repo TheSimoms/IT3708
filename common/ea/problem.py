@@ -1,4 +1,4 @@
-from common.ea.reproduction_functions import mix_genome, genome_bit_mutation
+from common.ea.reproduction_functions import splice_genome, genome_bit_mutation
 from common.ea.utils import random_bits
 
 
@@ -21,7 +21,7 @@ class BaseProblem:
 
     @staticmethod
     def crossover_function():
-        return mix_genome
+        return splice_genome
 
     @staticmethod
     def mutation_function(**kwargs):
