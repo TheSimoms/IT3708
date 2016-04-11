@@ -1,4 +1,5 @@
-from utils import flip_bit, list_to_string, random_boolean, random_probability, random_list_position, random_character
+from common.ea.utils import (flip_bit, list_to_string, random_boolean,
+                             random_probability, random_list_position, random_character)
 
 
 def mix_genome(genome_a, genome_b):

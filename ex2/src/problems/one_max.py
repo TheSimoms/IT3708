@@ -1,10 +1,9 @@
-from utils import generate_bit_population, generate_bit_individual, bit_string_to_ints, list_to_string
-from problem import Problem
-from parameters import get_boolean_parameter
-from reproduction_functions import mix_genome, genome_bit_mutation
+from common.ea.utils import generate_bit_population, bit_string_to_ints, list_to_string
+from common.ea.reproduction_functions import mix_genome, genome_bit_mutation
+from common.ea.problem import BaseProblem
 
 
-class OneMax(Problem):
+class OneMax(BaseProblem):
     def __init__(self, **kwargs):
         super().__init__('One-Max')
 
@@ -19,8 +18,7 @@ class OneMax(Problem):
 
         return sum(self.target_phenotype[i] == phenotype[i] for i in range(phenotype_size)) / phenotype_size
 
-    @staticmethod
-    def genome_to_phenotype(genome, **kwargs):
+    def genome_to_phenotype(self, genome, **kwargs):
         return bit_string_to_ints(genome)
 
     def represent_phenotype(self, phenotype, **kwargs):

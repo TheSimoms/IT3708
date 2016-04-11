@@ -1,10 +1,10 @@
-from utils import generate_string_population
-from problem import Problem
-from reproduction_functions import splice_genome, genome_string_mutation
-from parameters import get_numeric_parameter, get_boolean_parameter
+from common.ea.utils import generate_string_population
+from common.ea.reproduction_functions import splice_genome, genome_string_mutation
+from common.ea.problem import BaseProblem
+from common.utils.parameters import get_numeric_parameter, get_boolean_parameter
 
 
-class SurprisingSequences(Problem):
+class SurprisingSequences(BaseProblem):
     def __init__(self, **kwargs):
         super().__init__('Surprising sequences')
 
@@ -29,8 +29,7 @@ class SurprisingSequences(Problem):
 
         return (len(set(sequences)) - 1) / (len(sequences) - 1)
 
-    @staticmethod
-    def genome_to_phenotype(genome, **kwargs):
+    def genome_to_phenotype(self, genome, **kwargs):
         return tuple(genome)
 
     def represent_phenotype(self, phenotype, **kwargs):

@@ -1,17 +1,15 @@
-import numpy as np
 import copy
 
-from ea import EA
+import numpy as np
 
-from utils import make_plot, generate_bit_individual
-from parameters import get_boolean_parameter, get_choice_parameter
-
+from common.ea.ea import EA
+from common.ea.utils import make_plot, generate_bit_individual
+from common.ea.parent_selection_functions import PARENT_SELECTION_FUNCTIONS
+from common.ea.adult_selection_functions import ADULT_SELECTION_FUNCTIONS
+from common.utils.parameters import get_boolean_parameter, get_choice_parameter
 from problems.one_max import OneMax
 from problems.lolz import LOLZ
 from problems.surprising_sequences import SurprisingSequences
-
-from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
-from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 
 
 def run_one_max_analysis(problem, parameters):

@@ -1,6 +1,8 @@
 from math import sqrt
 
-from utils import crossover
+from common.ea.utils import crossover
+from common.ea.adult_selection_functions import full_selection
+from common.ea.parent_selection_functions import fitness_proportionate
 
 
 class Individual:
@@ -13,21 +15,24 @@ class Individual:
 class EA:
     def __init__(self, parameters, log=True):
         self.problem = parameters.get('problem')
-        self.parameters = parameters.get('parameters')
+        self.parameters = parameters.get('parameters', {
+            'group_size': 10,
+            'epsilon': 0.5
+        })
 
-        self.population_size = parameters.get('population_size')
+        self.population_size = parameters.get('population_size', 200)
         self.genome_size = parameters.get('genome_size')
 
-        self.crossover_probability = parameters.get('crossover_probability')
-        self.mutation_probability = parameters.get('mutation_probability')
+        self.crossover_probability = parameters.get('crossover_probability', 0.9)
+        self.mutation_probability = parameters.get('mutation_probability', 0.9)
 
-        self.adult_selection_function = parameters.get('adult_selection_function')
-        self.parent_selection_function = parameters.get('parent_selection_function')
+        self.adult_selection_function = parameters.get('adult_selection_function', full_selection)
+        self.parent_selection_function = parameters.get('parent_selection_function', fitness_proportionate)
 
-        self.max_number_of_generations = parameters.get('max_number_of_generations')
-        self.target_fitness = parameters.get('target_fitness')
+        self.max_number_of_generations = parameters.get('max_number_of_generations', 100)
+        self.target_fitness = parameters.get('target_fitness', 1)
 
-        self.elitism_number = parameters.get('elitism_number')
+        self.elitism_number = parameters.get('elitism_number', 5)
 
         self.log = log
 
@@ -103,8 +108,8 @@ class EA:
 
         best_phenotypes.append(best_individual.phenotype)
 
-    def __log(self, generation_number, fitness_data, best_phenotypes):
-        print('Generation number: %d' % generation_number)
+    def __log(self, fitness_data, best_phenotypes):
+        print('Generation number: %d' % (self.parameters['generation_number'] + 1))
 
         print('Fitness:')
         print('\tBest: %.2f' % fitness_data['best'][-1])
@@ -116,8 +121,9 @@ class EA:
             phenotype=best_phenotypes[-1], **self.parameters
         ))
 
-    def __is_simulation_finished(self, generation_number, best_fitness):
-        if self.max_number_of_generations is not None and generation_number >= self.max_number_of_generations:
+    def __is_simulation_finished(self, best_fitness):
+        if self.max_number_of_generations is not None and \
+                        self.parameters['generation_number'] + 1 >= self.max_number_of_generations:
             print('Maximum number of generations reached!')
         elif self.target_fitness is not None and best_fitness >= self.target_fitness:
             print('Target fitness reached!')
@@ -127,7 +133,7 @@ class EA:
         return True
 
     def run(self):
-        generation_number = 0
+        self.parameters['generation_number'] = 0
 
         fitness_data = {
             'best': [],
@@ -160,17 +166,17 @@ class EA:
                 self.__update_logging_data(population, best_individual, fitness_data, best_phenotypes)
 
                 if self.log:
-                    self.__log(generation_number, fitness_data, best_phenotypes)
+                    self.__log(fitness_data, best_phenotypes)
 
-                if self.__is_simulation_finished(generation_number, best_individual.fitness):
+                if self.__is_simulation_finished(best_individual.fitness):
                     break
 
-                generation_number += 1
+                self.parameters['generation_number'] += 1
             except KeyboardInterrupt:
                 break
 
         return {
-            'generation_number': generation_number,
+            'generation_number': self.parameters['generation_number'],
             'population': population,
             'best_individual': best_individual,
             'best_run_individual': best_run_individual,

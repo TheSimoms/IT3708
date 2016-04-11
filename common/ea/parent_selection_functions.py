@@ -1,7 +1,7 @@
 from random import random, choice, sample
 from math import sqrt
 
-from utils import random_probability
+from common.ea.utils import random_probability
 
 
 def fitness_proportionate(**kwargs):

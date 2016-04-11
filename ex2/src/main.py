@@ -1,15 +1,15 @@
-from ea import EA
-from parameters import get_boolean_parameter, get_numeric_parameter, get_choice_parameter, get_choice_sub_parameter
+from common.ea.ea import EA
+from common.ea.utils import make_plot
+from common.ea.adult_selection_functions import ADULT_SELECTION_FUNCTIONS
+from common.ea.parent_selection_functions import PARENT_SELECTION_FUNCTIONS
+
+from common.utils.parameters import get_boolean_parameter, get_numeric_parameter, get_choice_parameter, get_choice_sub_parameter
 
 from problems.one_max import OneMax
 from problems.lolz import LOLZ
 from problems.surprising_sequences import SurprisingSequences
 
 from analysis import run_analysis_problem
-from utils import make_plot
-
-from adult_selection_functions import ADULT_SELECTION_FUNCTIONS
-from parent_selection_functions import PARENT_SELECTION_FUNCTIONS
 
 
 def get_parameters():
