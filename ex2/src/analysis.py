@@ -3,7 +3,8 @@ import copy
 import numpy as np
 
 from common.ea.ea import EA
-from common.ea.utils import make_plot, generate_bit_individual
+from common.ea.utils import generate_bit_individual
+from common.ea.analysis import plot_analysis_results
 from common.ea.parent_selection_functions import PARENT_SELECTION_FUNCTIONS
 from common.ea.adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 from common.utils.parameters import get_boolean_parameter, get_choice_parameter
@@ -192,12 +193,3 @@ def run_analysis(number_of_runs, parameters):
             break
 
     return fitness_results
-
-
-def plot_analysis_results(results, problem_name, file_name):
-    data = []
-
-    for i in range(len(results)):
-        data.append((results[i], 'Run %d' % (i+1)))
-
-    make_plot(data, problem_name, 'Generation number', 'Max fitness', file_name)

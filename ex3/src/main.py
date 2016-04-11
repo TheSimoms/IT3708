@@ -11,6 +11,7 @@ from constants import *
 from common.ea.ea import EA
 from common.ea.adult_selection_functions import mixing
 from common.utils.parameters import get_boolean_parameter, get_numeric_parameter
+from common.ea.analysis import plot_results
 
 
 class FlatlandANN:
@@ -70,7 +71,10 @@ class FlatlandANN:
     def run(self):
         print('')
 
-        best_individual = self.ea.run()['best_individual']
+        results = self.ea.run()
+
+        if get_boolean_parameter('\nDo you want to see results from EA run'):
+            plot_results(results)
 
         print('\nReady to run the agent!')
 
@@ -84,7 +88,7 @@ class FlatlandANN:
             else:
                 scenarios = [deepcopy(scenario) for scenario in self.scenarios[-1]]
 
-        self.network.relations = best_individual.phenotype
+        self.network.relations = results['best_individual'].phenotype
 
         for i, scenario in enumerate(scenarios):
             self.run_scenario(i, scenario)

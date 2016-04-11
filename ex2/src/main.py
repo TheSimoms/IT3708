@@ -1,5 +1,5 @@
 from common.ea.ea import EA
-from common.ea.utils import make_plot
+from common.ea.analysis import plot_results
 from common.ea.adult_selection_functions import ADULT_SELECTION_FUNCTIONS
 from common.ea.parent_selection_functions import PARENT_SELECTION_FUNCTIONS
 
@@ -25,7 +25,7 @@ def get_parameters():
         'max_number_of_generations': get_numeric_parameter('Maximum number of generations', int, True),
         'target_fitness': 1.0,
 
-        'elitism_number': 1.0,
+        'elitism_number': 1,
     }
 
     adult_selection_function, adult_selection_function_parameters = get_choice_parameter(
@@ -60,15 +60,6 @@ def get_parameters():
     print('')
 
     return parameters
-
-
-def plot_results(results):
-    make_plot([
-        (results['fitness_data']['best'], 'Best'),
-        (results['fitness_data']['worst'], 'Worst'),
-        (results['fitness_data']['average'], 'Average'),
-        (results['fitness_data']['standard_deviation'], 'Standard deviation'),
-    ], results['problem'].name, 'Generation number', 'Fitness')
 
 
 def run_problem():
