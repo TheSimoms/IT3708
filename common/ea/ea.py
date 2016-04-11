@@ -32,7 +32,7 @@ class EA:
         self.max_number_of_generations = parameters.get('max_number_of_generations', 100)
         self.target_fitness = parameters.get('target_fitness', 1)
 
-        self.elitism_number = parameters.get('elitism_number', 5)
+        self.elitism_number = parameters.get('elitism_number', 20)
 
         self.log = log
 

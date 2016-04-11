@@ -10,6 +10,7 @@ from constants import *
 
 from common.ea.ea import EA
 from common.ea.adult_selection_functions import mixing
+from common.ea.parent_selection_functions import tournament_selection
 from common.utils.parameters import get_boolean_parameter, get_numeric_parameter
 from common.ea.analysis import plot_results
 
@@ -32,15 +33,17 @@ class FlatlandANN:
         self.problem = Problem(number_of_bits, self.network, self.flatland)
 
         genome_size = number_of_bits * sum(x * y for x, y in self.network.get_dimensions())
-        number_of_generations = 30
+        number_of_generations = 50
 
         if self.dynamic_scenarios:
             self.scenarios = [
                 [self.flatland.clone() for _ in range(self.number_of_scenarios)] for _ in range(number_of_generations)
             ]
         else:
+            scenario_base = [self.flatland.clone() for _ in range(self.number_of_scenarios)]
+
             self.scenarios = [
-                [deepcopy(self.flatland) for _ in range(self.number_of_scenarios)] for _ in range(number_of_generations)
+                deepcopy(scenario_base) for _ in range(number_of_generations)
             ]
 
         self.ea = EA({
@@ -48,17 +51,18 @@ class FlatlandANN:
             'genome_size': genome_size,
             'max_number_of_generations': number_of_generations,
             'adult_selection_function': mixing,
+            'parent_selection_function': tournament_selection,
             'parameters': {
                 'flatland_scenarios': self.scenarios,
                 'group_size': 50,
-                'epsilon': 0.5
+                'epsilon': 0.1
             }
         })
 
     def run_scenario(self, i, scenario):
         scenario_copy = deepcopy(scenario)
 
-        print('\nScenario: %d' % i)
+        print('\nScenario: %d' % (i + 1))
 
         moves = scenario_copy.run(self.network)
 

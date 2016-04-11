@@ -66,9 +66,9 @@ class Flatland(World):
             else:
                 move = AGENT_MOVES[move_index]
 
+            moves.append(move)
+
             self.agent.perform_move(move)
             self.number_of_steps -= 1
-
-            moves.append(move)
 
         return moves
