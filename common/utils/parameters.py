@@ -19,7 +19,7 @@ def get_numeric_parameter(variable_name, data_type, allow_none=False):
                 return None
 
             return data_type(answer)
-        except NameError:
+        except (NameError, ValueError):
             print('You need to supply data of type %s' % data_type)
 
 

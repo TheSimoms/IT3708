@@ -1,8 +1,9 @@
 import pygame
 
-from time import sleep
+from time import time
 
 from constants import *
+from utils import add_values
 
 
 FOOD_COLOR = (0, 255, 0)
@@ -14,6 +15,7 @@ AGENT_SNOUT_COLOR = (255, 255, 0)
 
 SLEEP_TIME = 1.0
 SLEEP_STEP = 0.25
+MAX_SLEEP_TIME = 5.0
 
 CELL_SIZE = 100
 
@@ -56,7 +58,21 @@ class GUI:
         )
 
     def draw_agent(self, x, y):
-        pass
+        self.draw_circle(x, y, AGENT_COLOR, radius=CELL_SIZE//4)
+
+        snout_position = add_values(
+            (x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2),
+            map(
+                lambda pos: 20 * pos, DIRECTION_VALUES[self.flatland.agent.direction]
+            )
+        )
+
+        pygame.draw.circle(
+            self.window,
+            AGENT_SNOUT_COLOR,
+            snout_position,
+            CELL_SIZE // 10
+        )
 
     def draw_food(self, x, y):
         self.draw_circle(x, y, FOOD_COLOR)
@@ -87,7 +103,7 @@ class GUI:
     def show_run(self):
         sleep_time = SLEEP_TIME
 
-        for move in self.moves + [NO_OPERATION]:
+        for move in self.moves:
             self.draw_board()
 
             while self.paused:
@@ -97,17 +113,22 @@ class GUI:
                     elif event.type == pygame.KEYDOWN and event.key == pygame.QUIT:
                         return
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.pause()
-                    elif event.key == pygame.K_PLUS:
-                        sleep_time = max(sleep_time - SLEEP_STEP, SLEEP_STEP)
-                    elif event.key == pygame.K_MINUS:
-                        sleep_time += SLEEP_STEP
+            sleep_time_end = time() + sleep_time
 
-            sleep(sleep_time)
+            while time() < sleep_time_end:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        return
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            self.pause()
+                        elif event.key == pygame.K_UP:
+                            sleep_time = max(sleep_time - SLEEP_STEP, SLEEP_STEP)
+                        elif event.key == pygame.K_DOWN:
+                            sleep_time = min(sleep_time + SLEEP_STEP, MAX_SLEEP_TIME)
 
             self.flatland.agent.perform_move(move)
+
+        input('\nScenario complete. Press enter to continue.')
+
+        pygame.quit()

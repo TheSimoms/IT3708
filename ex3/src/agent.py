@@ -14,9 +14,6 @@ class Agent:
         self.eaten_food_count = 0
         self.eaten_poison_count = 0
 
-        self.total_food_count = self.world.get_value_count(FOOD)
-        self.total_poison_count = self.world.get_value_count(POISON)
-
     @property
     def position(self):
         return self.x, self.y

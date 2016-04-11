@@ -6,6 +6,7 @@ from problem import Problem
 from gui import GUI
 
 from utils import sigmoid_function
+from constants import *
 
 from common.ea.ea import EA
 from common.ea.adult_selection_functions import mixing
@@ -20,6 +21,7 @@ class FlatlandANN:
             flatland_activation_threshold=0.5, number_of_scenarios=1
     ):
         self.dynamic_scenarios = dynamic_scenarios
+        self.number_of_scenarios = number_of_scenarios
 
         self.network = ANN(network_layers, network_activation_function, network_activation_threshold, network_bias)
         self.flatland = Flatland(
@@ -32,12 +34,12 @@ class FlatlandANN:
         number_of_generations = 30
 
         if self.dynamic_scenarios:
-            scenarios = [
-                [self.flatland.clone() for _ in range(number_of_scenarios)] for _ in range(number_of_generations)
+            self.scenarios = [
+                [self.flatland.clone() for _ in range(self.number_of_scenarios)] for _ in range(number_of_generations)
             ]
         else:
-            scenarios = [
-                [deepcopy(self.flatland) for _ in range(number_of_scenarios)] for _ in range(number_of_generations)
+            self.scenarios = [
+                [deepcopy(self.flatland) for _ in range(self.number_of_scenarios)] for _ in range(number_of_generations)
             ]
 
         self.ea = EA({
@@ -46,11 +48,24 @@ class FlatlandANN:
             'max_number_of_generations': number_of_generations,
             'adult_selection_function': mixing,
             'parameters': {
-                'flatland_scenarios': scenarios,
+                'flatland_scenarios': self.scenarios,
                 'group_size': 50,
                 'epsilon': 0.5
             }
         })
+
+    def run_scenario(self, i, scenario):
+        scenario_copy = deepcopy(scenario)
+
+        print('\nScenario: %d' % i)
+
+        moves = scenario_copy.run(self.network)
+
+        print('Results:')
+        print('\tFood eaten: %s/%s' % (scenario_copy.agent.eaten_food_count, scenario.get_value_count(FOOD)))
+        print('\tPoison eaten: %s/%s' % (scenario_copy.agent.eaten_poison_count, scenario.get_value_count(POISON)))
+
+        GUI(self.problem.name, scenario, moves)
 
     def run(self):
         print('')
@@ -60,22 +75,19 @@ class FlatlandANN:
         print('\nReady to run the agent!')
 
         if self.dynamic_scenarios:
-            flatland = self.flatland.clone()
+            scenarios = [self.flatland.clone() for _ in range(self.number_of_scenarios)]
         else:
-            if get_boolean_parameter('Simulate using random scenario'):
-                flatland = self.flatland.clone()
+            if get_boolean_parameter('Simulate using random scenario%s' % (
+                    '' if self.number_of_scenarios == 1 else 's')
+            ):
+                scenarios = [self.flatland.clone() for _ in range(self.number_of_scenarios)]
             else:
-                flatland = deepcopy(self.flatland)
+                scenarios = [deepcopy(scenario) for scenario in self.scenarios[-1]]
 
         self.network.relations = best_individual.phenotype
 
-        moves = flatland.run(self.network)
-
-        print('\nResults:')
-        print('Food eaten: %s/%s' % (flatland.agent.eaten_food_count, flatland.agent.total_food_count))
-        print('Poison eaten: %s/%s' % (flatland.agent.eaten_poison_count, flatland.agent.total_poison_count))
-
-        GUI(self.problem.name, flatland, moves)
+        for i, scenario in enumerate(scenarios):
+            self.run_scenario(i, scenario)
 
 
 if __name__ == '__main__':

@@ -4,9 +4,9 @@ from random import choice
 class World:
     def __init__(self, dimensions):
         self.width, self.height = dimensions
-        self.map = [[self.generate_tile() for _ in range(self.width)] for _ in range(self.height)]
+        self.map = self.generate_map()
 
-    def generate_tile(self):
+    def generate_map(self):
         raise NotImplementedError
 
     def get_tile_absolute_coordinates(self, x, y):
