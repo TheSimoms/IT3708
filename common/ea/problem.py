@@ -11,13 +11,13 @@ class BaseProblem:
         return [random_bits(genome_size) for _ in range(population_size)]
 
     def fitness_function(self, phenotype, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError
 
     def genome_to_phenotype(self, genome, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError
 
     def represent_phenotype(self, phenotype, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError
 
     @staticmethod
     def crossover_function():

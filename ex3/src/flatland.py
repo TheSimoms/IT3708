@@ -57,7 +57,7 @@ class Flatland(World):
                 int(sensor_readings[MOVE_RIGHT] == POISON),
             ]
 
-            outputs = network.run_inputs(inputs)
+            outputs = network.run_input_values(inputs)
 
             move_index = max(range(len(outputs)), key=lambda i: outputs[i])
 

@@ -16,8 +16,8 @@ class SimpleNeuralNetwork:
     def fill_layer(self, i, values):
         self.neurons[i][:self.layers[i]] = values
 
-    def run_inputs(self, inputs):
-        self.fill_layer(0, array(inputs))
+    def run_input_values(self, input_values):
+        self.fill_layer(0, array(input_values))
 
         for i in range(len(self.layers) - 1):
             self.fill_layer(
