@@ -1,18 +1,18 @@
 from copy import deepcopy
 
-from ann import ANN
 from flatland import Flatland
 from problem import Problem
 from gui import GUI
 
-from utils import sigmoid_function
-from constants import *
-
+from common.ann.ann import ANN
+from common.ann.utils import sigmoid_function
 from common.ea.ea import EA
 from common.ea.adult_selection_functions import mixing
 from common.ea.parent_selection_functions import tournament_selection
 from common.utils.parameters import get_boolean_parameter, get_numeric_parameter
 from common.ea.analysis import plot_results
+
+from constants import *
 
 
 class FlatlandANN:
