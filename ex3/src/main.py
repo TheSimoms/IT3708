@@ -4,7 +4,7 @@ from flatland import Flatland
 from problem import Problem
 from gui import GUI
 
-from common.ann.ann import ANN
+from common.ann.ann import SimpleNeuralNetwork
 from common.ann.utils import sigmoid_function
 from common.ea.ea import EA
 from common.ea.adult_selection_functions import mixing
@@ -25,7 +25,7 @@ class FlatlandANN:
         self.dynamic_scenarios = dynamic_scenarios
         self.number_of_scenarios = number_of_scenarios
 
-        self.network = ANN(network_layers, network_activation_function, network_activation_threshold)
+        self.network = SimpleNeuralNetwork(network_layers, network_activation_function, network_activation_threshold)
         self.flatland = Flatland(
             flatland_dimensions, flatland_distributions, flatland_number_of_steps, flatland_activation_threshold
         )

@@ -1,7 +1,7 @@
 from numpy import zeros, vectorize, array
 
 
-class ANN:
+class SimpleNeuralNetwork:
     def __init__(self, layers, activation_function, activation_threshold=0.0):
         self.layers = layers
 
