@@ -17,7 +17,7 @@ from common.ea.analysis import plot_results
 
 class FlatlandANN:
     def __init__(
-            self, network_layers, network_bias, dynamic_scenarios=False, number_of_bits=1,
+            self, network_layers, dynamic_scenarios=False, number_of_bits=1,
             network_activation_function=sigmoid_function, network_activation_threshold=0.0,
             flatland_dimensions=(10, 10), flatland_distributions=(1/3, 1/3), flatland_number_of_steps=60,
             flatland_activation_threshold=0.5, number_of_scenarios=1
@@ -25,7 +25,7 @@ class FlatlandANN:
         self.dynamic_scenarios = dynamic_scenarios
         self.number_of_scenarios = number_of_scenarios
 
-        self.network = ANN(network_layers, network_activation_function, network_activation_threshold, network_bias)
+        self.network = ANN(network_layers, network_activation_function, network_activation_threshold)
         self.flatland = Flatland(
             flatland_dimensions, flatland_distributions, flatland_number_of_steps, flatland_activation_threshold
         )
@@ -100,7 +100,7 @@ class FlatlandANN:
 
 if __name__ == '__main__':
     FlatlandANN(
-        [6, 3], {0: [1.0]},
+        [6, 3],
         dynamic_scenarios=get_boolean_parameter('Dynamic scenarios'),
         number_of_scenarios=get_numeric_parameter('Number of scenarios', int)
     ).run()

@@ -1,19 +1,13 @@
-from numpy import concatenate, zeros, vectorize, array
+from numpy import zeros, vectorize, array
 
 
 class ANN:
-    def __init__(self, layers, activation_function, activation_threshold=0.0, bias=None):
-        if bias is None:
-            bias = {}
-
+    def __init__(self, layers, activation_function, activation_threshold=0.0):
         self.layers = layers
-        self.bias = bias
 
         self.relations = None
         self.neurons = [
-            concatenate(
-                (zeros(layer_size), self.bias.get(i, []))
-            ) for i, layer_size in enumerate(self.layers)
+            zeros(layer_size) for i, layer_size in enumerate(self.layers)
         ]
         self.activation_function = vectorize(
             lambda x: activation_function(x - activation_threshold)
@@ -38,7 +32,7 @@ class ANN:
     def get_dimensions(self):
         return [
             (
-                self.layers[i] + len(self.bias.get(i, [])),
+                self.layers[i],
                 self.layers[i + 1]
             ) for i in range(len(self.layers) - 1)
         ]
