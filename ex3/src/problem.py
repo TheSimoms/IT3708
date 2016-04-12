@@ -5,9 +5,7 @@ from utils import normalize_bitstring, fill_matrix
 
 
 class Problem(BaseProblem):
-    def __init__(
-            self, number_of_bits, network, flatland
-    ):
+    def __init__(self, number_of_bits, network, flatland):
         super().__init__('Flatland')
 
         self.number_of_bits = number_of_bits
