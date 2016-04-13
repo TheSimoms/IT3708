@@ -103,14 +103,13 @@ class Agent:
         self.world.generate_new_object()
 
         for _ in range(self.number_of_time_steps):
-            self.world.object.y -= 1
-
             if self.world.object.y == 0:
                 self.check_object(self.world.object)
                 self.world.generate_new_object()
 
                 continue
 
+            self.world.object.y -= 1
             self.make_best_move()
 
             if self.gui is not None:
