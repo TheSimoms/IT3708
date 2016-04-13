@@ -118,8 +118,8 @@ class Agent:
 
 
 class AgentWithWalls(Agent):
-    def __init__(self, world, network, width=TRACKER_WIDTH):
-        super().__init__(world, network, width)
+    def __init__(self, world, network, number_of_time_steps=NUMBER_OF_TIME_STEPS, width=TRACKER_WIDTH):
+        super().__init__(world, network, number_of_time_steps, width)
 
     @property
     def x_end(self):
