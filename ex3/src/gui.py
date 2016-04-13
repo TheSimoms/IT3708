@@ -3,7 +3,7 @@ import pygame
 from time import time
 
 from constants import *
-from utils import add_values
+from common.utils.utils import add_values
 
 
 FOOD_COLOR = (0, 255, 0)

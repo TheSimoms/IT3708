@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from common.ea.problem import BaseProblem
-from utils import normalize_bitstring, fill_matrix
+from common.utils.utils import normalize_bitstring, fill_matrix
 
 
 class Problem(BaseProblem):
@@ -34,7 +34,7 @@ class Problem(BaseProblem):
                 for i in range(0, len(genome), self.number_of_bits)
             ],
             self.network.get_dimensions()
-        )
+        )[0]
 
     def represent_phenotype(self, phenotype, **kwargs):
         return str(list(phenotype))

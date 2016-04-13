@@ -5,16 +5,25 @@ def normalize_bitstring(bitstring):
     return int(bitstring, base=2) / (2 ** len(bitstring) - 1)
 
 
-def fill_matrix(data, matrix_dimensions):
+def fill_matrix(data, matrix_dimensions, mapping_function=None):
     matrices = [zeros(dimension) for dimension in matrix_dimensions]
 
     for matrix in matrices:
         for y in range(len(matrix)):
             for x in range(len(matrix[y])):
-                matrix[y][x] = data.pop()
+                value = data.pop()
 
-    return matrices
+                if mapping_function is not None:
+                    value = mapping_function(value)
+
+                matrix[y][x] = value
+
+    return matrices, data
 
 
 def add_values(*values):
     return tuple(map(sum, zip(*values)))
+
+
+def scale_value(value, low, high):
+    return low + (high - low) * value

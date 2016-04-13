@@ -1,7 +1,7 @@
 import logging
 
 from constants import *
-from utils import add_values
+from common.utils.utils import add_values
 
 
 class Agent:

@@ -8,7 +8,7 @@ class BiasNeuron:
         self.y = value
 
     @property
-    def output_value(self):
+    def output_values(self):
         return self.y
 
 
@@ -25,7 +25,7 @@ class NormalNeuron:
         self.y = self.y + (self.s - self.y) / self.time
 
     @property
-    def output_value(self):
+    def output_values(self):
         return sigmoid_function(self.gains * self.y)
 
 
@@ -38,18 +38,18 @@ class ContinuousTimeRecurrentNeuralNetwork:
 
     def fill_layer(self, i, values):
         for j, value in enumerate(values):
-            self.layers[i][j].set_input(values)
+            self.layers[i][j].set_input(value)
 
     def get_layer_values(self, i, is_bias=True):
         if is_bias:
-            return array([neuron.output_value for neuron in self.layers[i]])
+            return array([neuron.output_values for neuron in self.layers[i]])
 
-        return array([neuron.output_value for neuron in self.layers[i] if isinstance(neuron, NormalNeuron)])
+        return array([neuron.output_values for neuron in self.layers[i] if isinstance(neuron, NormalNeuron)])
 
     def get_number_of_neurons_in_layer(self, i):
         return (
             sum(isinstance(neuron, NormalNeuron) for neuron in self.layers[i]),
-            sum(isinstance(neuron, NormalNeuron) for neuron in self.layers[i]),
+            sum(isinstance(neuron, BiasNeuron) for neuron in self.layers[i]),
         )
 
     def apply_phenotype(self, phenotype):
@@ -61,10 +61,10 @@ class ContinuousTimeRecurrentNeuralNetwork:
         for layer in self.layers:
             for neuron in layer:
                 if isinstance(neuron, NormalNeuron):
-                    i += 1
-
                     neuron.gains = phenotype['gains'][i]
                     neuron.time = phenotype['time'][i]
+
+                    i += 1
 
     def run_input_values(self, input_values):
         self.fill_layer(0, input_values)
@@ -77,3 +77,18 @@ class ContinuousTimeRecurrentNeuralNetwork:
                     self.get_layer_values(i).dot(self.intra_connections[i])
                 )
             )
+
+        return [neuron.output_values for neuron in self.layers[-1]]
+
+    def calculate_phenotype_size(self):
+        return {
+            'neurons': sum(self.get_number_of_neurons_in_layer(i)[0] for i in range(len(self.layers))),
+            'looping_connections': [
+                tuple(self.get_number_of_neurons_in_layer(i)[0] for _ in range(2)) for i in range(1, len(self.layers))
+            ],
+            'intra_connections': [
+                (
+                    sum(self.get_number_of_neurons_in_layer(i)), self.get_number_of_neurons_in_layer(i + 1)[0]
+                ) for i in range(len(self.layers) - 1)
+            ]
+        }

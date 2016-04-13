@@ -3,7 +3,7 @@ from common.ea.utils import random_bits
 
 
 class BaseProblem:
-    def __init__(self, name, **kwargs):
+    def __init__(self, name):
         self.name = name
 
     @staticmethod
