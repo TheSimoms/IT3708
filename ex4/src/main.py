@@ -26,8 +26,6 @@ class BeerTracker:
                 (NormalNeuron(), NormalNeuron(), NormalNeuron(), NormalNeuron(), BiasNeuron(1.0)),
                 (NormalNeuron(), NormalNeuron())
             )
-
-            self.score_weights = [1, 1.5, -1.25, -1.25]
         else:
             self.agent_class = Agent
 
@@ -37,8 +35,6 @@ class BeerTracker:
                     (NormalNeuron(), NormalNeuron(), BiasNeuron(1.0)),
                     (NormalNeuron(), NormalNeuron(), NormalNeuron())
                 )
-
-                self.score_weights = [1, 1.25, -1.5, -1]
             else:
                 network_layers = (
                     (NormalNeuron(), NormalNeuron(), NormalNeuron(), NormalNeuron(), NormalNeuron(), BiasNeuron(1.0)),
@@ -46,12 +42,10 @@ class BeerTracker:
                     (NormalNeuron(), NormalNeuron())
                 )
 
-                self.score_weights = [1, 2, -1, -1]
-
         self.network = ContinuousTimeRecurrentNeuralNetwork(network_layers)
         self.world = World(world_dimensions)
 
-        self.problem = Problem(number_of_bits, self.agent_class, self.world, self.network, self.score_weights)
+        self.problem = Problem(number_of_bits, self.agent_class, self.world, self.network)
 
         self.ea = EA({
             'problem': self.problem,
@@ -79,7 +73,7 @@ class BeerTracker:
 
         self.network.apply_phenotype(results['best_individual'].phenotype)
 
-        agent = self.agent_class(self.world, self.network, self.score_weights)
+        agent = self.agent_class(self.world, self.network)
 
         GUI(self.problem.name, agent)
 

@@ -2,10 +2,9 @@ from ex4.src.constants import *
 
 
 class Agent:
-    def __init__(self, world, network, weights, number_of_time_steps=NUMBER_OF_TIME_STEPS, width=TRACKER_WIDTH):
+    def __init__(self, world, network, number_of_time_steps=NUMBER_OF_TIME_STEPS, width=TRACKER_WIDTH):
         self.world = world
         self.network = network
-        self.weights = weights
         self.gui = None
 
         self.number_of_time_steps = number_of_time_steps
@@ -26,7 +25,7 @@ class Agent:
 
     @property
     def score(self):
-        return sum(map(lambda x: x[0] * x[1], zip(self.points, self.weights)))
+        return sum(map(lambda x: x[0] * x[1], zip(self.points, [1, 2, -1, -1])))
 
     @property
     def x_end(self):

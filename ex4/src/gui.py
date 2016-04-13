@@ -52,27 +52,6 @@ class GUI:
         pygame.display.set_caption(self.title)
 
     def draw_board(self):
-        sleep_time_end = time() + self.sleep_time
-
-        while self.paused:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.un_pause()
-                elif event.type == pygame.KEYDOWN and event.key == pygame.QUIT:
-                    return
-
-        while time() < sleep_time_end:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.pause()
-                    elif event.key == pygame.K_UP:
-                        self.sleep_time = max(self.sleep_time - SLEEP_STEP, SLEEP_STEP)
-                    elif event.key == pygame.K_DOWN:
-                        self.sleep_time = min(self.sleep_time + SLEEP_STEP, MAX_SLEEP_TIME)
-
         self.window.fill(BACKGROUND_COLOR)
 
         self.window.blit(
@@ -108,9 +87,30 @@ class GUI:
                 agent_color,
                 pygame.Rect(
                     0,
-                    self.agent.world.height * CELL_SIZE,
+                    self.agent.world.height * CELL_SIZE - CELL_SIZE,
                     (self.agent.x_end + 1) * CELL_SIZE,
                     CELL_SIZE
                 ))
 
         pygame.display.flip()
+
+        sleep_time_end = time() + self.sleep_time
+
+        while self.paused:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.un_pause()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.QUIT:
+                    return
+
+        while time() < sleep_time_end:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.pause()
+                    elif event.key == pygame.K_UP:
+                        self.sleep_time = max(self.sleep_time - SLEEP_STEP, SLEEP_STEP)
+                    elif event.key == pygame.K_DOWN:
+                        self.sleep_time = min(self.sleep_time + SLEEP_STEP, MAX_SLEEP_TIME)
