@@ -44,27 +44,28 @@ def run_analysis_problem():
     plot_pareto_fronts(fronts)
 
 
-def run_problem():
+def run_problem(show_whole_population):
     parameters = get_parameters()
 
     population = MOEA(parameters).run()['population']
 
     print('')
 
-    if get_boolean_parameter('Show whole population'):
-        plot_whole_population(population.population)
+    if show_whole_population:
+        if get_boolean_parameter('Show whole population'):
+            plot_whole_population(population.population)
 
-    if get_boolean_parameter('Show only Pareto front'):
+    if get_boolean_parameter('Show Pareto front'):
         plot_pareto_front(population.fronts[0])
 
 
 def main():
     analysis = get_boolean_parameter('Run analysis')
 
-    if analysis:
+    if analysis and get_boolean_parameter('Multiple runs'):
         run_analysis_problem()
     else:
-        run_problem()
+        run_problem(analysis)
 
 
 if __name__ == '__main__':

@@ -1,13 +1,13 @@
-from common.ea.utils import random_probability, random_list_position
+from common.ea.utils import random_probability
 
 
 def genome_swap_mutation(**kwargs):
     genome = list(kwargs.get('genome'))
 
-    if random_probability(kwargs.get('probability')):
-        random_position = random_list_position(genome)
-        other_position = genome.index(genome[random_position])
+    for i in range(len(genome)):
+        if random_probability(kwargs.get('probability')):
+            swap_position = genome.index(genome[i])
 
-        genome[random_position], genome[other_position] = genome[other_position], genome[random_position]
+            genome[i], genome[swap_position] = genome[swap_position], genome[i]
 
-    return genome
+        return genome

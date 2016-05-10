@@ -19,12 +19,20 @@ def tournament_selection(**kwargs):
     while len(pairs) < len(population) / 2:
         tournament_pool = list(population)
 
-        tournament_group = sample(tournament_pool, group_size)
+        try:
+            tournament_group = sample(tournament_pool, group_size)
+        except ValueError:
+            tournament_group = tournament_pool
+
         individual_a = select_from_group(tournament_group)
 
         tournament_pool.remove(individual_a)
 
-        tournament_group = sample(tournament_pool, group_size)
+        try:
+            tournament_group = sample(tournament_pool, group_size)
+        except ValueError:
+            tournament_group = tournament_pool
+
         individual_b = select_from_group(tournament_group)
 
         pairs.append((individual_a, individual_b))

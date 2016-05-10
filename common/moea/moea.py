@@ -1,3 +1,5 @@
+from sys import maxsize
+
 from common.ea.utils import crossover
 
 from common.moea.parent_selection_functions import tournament_selection
@@ -21,7 +23,7 @@ class MOEA:
 
         self.parameters = parameters.get('parameters', {
             'group_size': 10,
-            'epsilon': 0.5
+            'epsilon': 0.1
         })
 
         self.crossover_probability = parameters.get('crossover_probability', 0.9)
@@ -93,20 +95,18 @@ class MOEA:
 
     def __calculate_crowding_distance(self, front):
         if len(front) > 0:
-            number_of_individuals = len(front)
-
             for individual in front:
                 individual.distance = 0
 
             for fitness_index in range(self.problem.number_of_fitness_values):
-                front.sort(key=lambda x: x.fitness[fitness_index])
+                front = sorted(front, key=lambda x: x.fitness[fitness_index])
 
-                front[0].distance = self.problem.maximum_fitness_values[fitness_index]
-                front[number_of_individuals-1].distance = self.problem.maximum_fitness_values[fitness_index]
+                front[0].distance = maxsize
+                front[-1].distance = maxsize
 
-                for i, individual in enumerate(front[1: number_of_individuals-1]):
+                for i, individual in enumerate(front[1:-1]):
                     front[i].distance = \
-                        (front[i+1].distance - front[i-1].distance) / \
+                        (front[i+1].fitness[fitness_index] - front[i-1].fitness[fitness_index]) / \
                         (
                             self.problem.maximum_fitness_values[fitness_index] -
                             self.problem.minimum_fitness_values[fitness_index]
@@ -155,34 +155,29 @@ class MOEA:
 
         self.__initialize()
 
-        self.__generate_fronts()
-        self.__calculate_crowding_distances()
-
-        old_population = None
-
         while True:
             try:
-                self.population.extend(self.__generate_offspring())
                 self.__generate_fronts()
+                self.__calculate_crowding_distances()
+
+                self.population.extend(self.__generate_offspring())
+
+                self.__generate_fronts()
+                self.__calculate_crowding_distances()
 
                 population = Population()
 
                 i = 0
 
                 while len(population.population) + len(self.population.fronts[i]) <= self.population_size:
-                    self.__calculate_crowding_distance(self.population.fronts[i])
-
                     population.extend(self.population.fronts[i])
 
                     i += 1
-
-                self.__calculate_crowding_distance(self.population.fronts[i])
 
                 population.extend(
                     sorted(self.population.fronts[i])[:self.population_size-len(population.population)]
                 )
 
-                old_population = self.population
                 self.population = population
 
                 if self.log:
@@ -199,9 +194,9 @@ class MOEA:
             except KeyboardInterrupt:
                 break
 
-        self.__generate_fronts(old_population)
+        self.__generate_fronts()
 
         return {
             'generation_number': self.parameters['generation_number'],
-            'population': old_population
+            'population': self.population
         }
