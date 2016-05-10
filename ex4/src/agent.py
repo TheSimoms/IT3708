@@ -56,7 +56,7 @@ class Agent:
         elif object_spanning_columns.intersection(self_spanning_columns):
             if _object.width >= self.width:
                 # Avoided big tile
-                self.points[1] += 1
+                self.points[2] += 1
             else:
                 # Missed small tile
                 self.points[3] += 1

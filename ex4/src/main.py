@@ -50,8 +50,8 @@ class BeerTracker:
         self.ea = EA({
             'problem': self.problem,
             'genome_size': self.problem.genotype_size,
-            'population_size': 200,
-            'max_number_of_generations': 15,
+            'population_size': 400,
+            'max_number_of_generations': 10,
             'adult_selection_function': mixing,
             'parent_selection_function': tournament_selection,
             'target_fitness': None,
