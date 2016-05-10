@@ -1,3 +1,5 @@
+from numpy.random import permutation
+
 from common.ea.utils import (flip_bit, list_to_string, random_boolean,
                              random_probability, random_list_position, random_character)
 
@@ -14,7 +16,15 @@ def splice_genome(genome_a, genome_b):
 
     splice_position = random_list_position(genome_a) + random_boolean()
 
-    return genome_a[:splice_position] + genome_b[splice_position:]
+    genome = genome_a[:splice_position] + genome_b[splice_position:]
+    missing = list(permutation([gene for gene in genome_a if gene not in genome]))
+
+    if len(missing) > 0:
+        for i in range(len(genome)):
+            if genome.count(genome[i]) > 1:
+                genome[i] = missing.pop(0)
+
+    return genome
 
 
 def genome_bit_mutation(**kwargs):
