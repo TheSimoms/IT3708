@@ -1,8 +1,5 @@
-from math import sqrt
-
 from common.ea.utils import crossover
 
-from common.moea.adult_selection_functions import mixing
 from common.moea.parent_selection_functions import tournament_selection
 
 
@@ -10,13 +7,6 @@ class Population:
     def __init__(self):
         self.population = []
         self.fronts = []
-
-    def __iter__(self):
-        return self.population.__iter__()
-
-    @property
-    def length(self):
-        return len(self.population)
 
     def extend(self, individuals):
         self.population.extend(individuals)
@@ -28,7 +18,6 @@ class MOEA:
         self.genome_size = parameters.get('genome_size')
 
         self.problem = parameters.get('problem')
-        self.population = parameters.get('population')
 
         self.parameters = parameters.get('parameters', {
             'group_size': 10,
@@ -38,35 +27,98 @@ class MOEA:
         self.crossover_probability = parameters.get('crossover_probability', 0.9)
         self.mutation_probability = parameters.get('mutation_probability', 0.9)
 
-        self.adult_selection_function = mixing
         self.parent_selection_function = tournament_selection
 
         self.max_number_of_generations = parameters.get('max_number_of_generations', 100)
-        self.target_fitness = parameters.get('target_fitness', 1)
+        self.target_fitness = parameters.get('target_fitness', None)
 
         self.log = log
 
         self.population = Population()
 
     def __initialize(self):
-        return self.problem.generate_population(
+        self.population.population = self.problem.generate_population(
             population_size=self.population_size, genome_size=self.genome_size, **self.parameters
         )
 
-    def __generate_fitness_values(self, individuals):
-        for individual in individuals:
+    def __generate_fitness_values(self, population):
+        for individual in population:
             individual.fitness = self.problem.fitness_function(
-                genotype=individual.genome, **self.parameters
+                individual=individual, **self.parameters
             )
 
-    def __generate_adult_population(self, old_population, children):
-        return self.adult_selection_function(
-            old_population=old_population, children=children, population_size=self.population_size, **self.parameters
-        )
+    def __generate_fronts(self, population=None):
+        if population is None:
+            population = self.population
 
-    def __generate_parents(self, population):
+        self.__generate_fitness_values(population.population)
+
+        population.fronts.append([])
+
+        for individual in population.population:
+            individual.number_of_dominating_individuals = 0
+            individual.dominated_individuals = set()
+
+            for neighbour in population.population:
+                if individual == neighbour:
+                    continue
+
+                if individual.dominates(neighbour):
+                    individual.dominated_individuals.add(neighbour)
+                elif neighbour.dominates(individual):
+                    individual.number_of_dominating_individuals += 1
+
+            if individual.number_of_dominating_individuals == 0:
+                population.fronts[0].append(individual)
+
+                individual.rank = 0
+
+        i = 0
+
+        while len(population.fronts[i]) > 0:
+            temp_front = []
+
+            for individual in population.fronts[i]:
+                for dominated_individual in individual.dominated_individuals:
+                    dominated_individual.number_of_dominating_individuals -= 1
+
+                    if dominated_individual.number_of_dominating_individuals == 0:
+                        dominated_individual.rank = i + 1
+
+                        temp_front.append(dominated_individual)
+
+            i += 1
+
+            population.fronts.append(temp_front)
+
+    def __calculate_crowding_distance(self, front):
+        if len(front) > 0:
+            number_of_individuals = len(front)
+
+            for individual in front:
+                individual.distance = 0
+
+            for fitness_index in range(self.problem.number_of_fitness_values):
+                front.sort(key=lambda x: x.fitness[fitness_index])
+
+                front[0].distance = self.problem.maximum_fitness_values[fitness_index]
+                front[number_of_individuals-1].distance = self.problem.maximum_fitness_values[fitness_index]
+
+                for i, individual in enumerate(front[1: number_of_individuals-1]):
+                    front[i].distance = \
+                        (front[i+1].distance - front[i-1].distance) / \
+                        (
+                            self.problem.maximum_fitness_values[fitness_index] -
+                            self.problem.minimum_fitness_values[fitness_index]
+                        )
+
+    def __calculate_crowding_distances(self):
+        for front in self.population.fronts:
+            self.__calculate_crowding_distance(front)
+
+    def __generate_parents(self):
         return self.parent_selection_function(
-            population=population, **self.parameters
+            population=self.population.population, **self.parameters
         )
 
     def __mutation_function(self, genome):
@@ -74,9 +126,9 @@ class MOEA:
             genome=genome, probability=self.mutation_probability, **self.parameters
         )
 
-    def __generate_offspring(self, population):
+    def __generate_offspring(self):
         # Generate mating pairs
-        mating_pairs = self.__generate_parents(population)
+        mating_pairs = self.__generate_parents()
 
         # Add best individuals to the child pool (elitism)
         children = []
@@ -95,95 +147,61 @@ class MOEA:
 
         return children[:self.population_size]
 
-    def __update_logging_data(self, population, best_individual, fitness_data, best_genomes):
-        fitness = [individual.fitness for individual in population]
-        average_fitness = sum(fitness) / self.population_size
-
-        fitness_data['best'].append(max(fitness))
-        fitness_data['worst'].append(min(fitness))
-        fitness_data['average'].append(average_fitness)
-        fitness_data['standard_deviation'].append(
-            sqrt(
-                sum(
-                    (individual.fitness - average_fitness) ** 2 for individual in population
-                ) / self.population_size
-            )
-        )
-
-        best_genomes.append(best_individual.genome)
-
-    def __log(self, fitness_data, best_genomes):
+    def __log(self):
         print('Generation number: %d' % (self.parameters['generation_number'] + 1))
-
-        print('Fitness:')
-        print('\tBest: %.2f' % fitness_data['best'][-1])
-        print('\tWorst: %.2f' % fitness_data['worst'][-1])
-        print('\tAverage: %.2f' % fitness_data['average'][-1])
-        print('\tStandard deviation: %.2f' % fitness_data['standard_deviation'][-1])
-
-        print('Best genome: %s\n' % self.problem.represent_genome(
-            genome=best_genomes[-1], **self.parameters
-        ))
-
-    def __is_simulation_finished(self, best_fitness):
-        if self.max_number_of_generations is not None and \
-                        self.parameters['generation_number'] + 1 >= self.max_number_of_generations:
-            print('Maximum number of generations reached!')
-        elif self.target_fitness is not None and best_fitness >= self.target_fitness:
-            print('Target fitness reached!')
-        else:
-            return False
-
-        return True
 
     def run(self):
         self.parameters['generation_number'] = 0
 
-        fitness_data = {
-            'best': [],
-            'worst': [],
-            'average': [],
-            'standard_deviation': []
-        }
-        best_genomes = []
+        self.__initialize()
 
-        population = []
-        children = self.__initialize()
+        self.__generate_fronts()
+        self.__calculate_crowding_distances()
 
-        best_individual = None
-        best_run_individual = None
+        old_population = None
 
         while True:
             try:
-                self.__generate_fitness_values(children)
+                self.population.extend(self.__generate_offspring())
+                self.__generate_fronts()
 
-                population = self.__generate_adult_population(population, children)
+                population = Population()
 
-                best_individual = max(population, key=lambda individual: individual.fitness)
-                best_run_individual = max(
-                    (best_individual, best_run_individual), key=lambda individual: individual.fitness
-                ) if best_run_individual is not None else best_individual
+                i = 0
 
-                children = self.__generate_offspring(population)
+                while len(population.population) + len(self.population.fronts[i]) <= self.population_size:
+                    self.__calculate_crowding_distance(self.population.fronts[i])
 
-                self.__update_logging_data(population, best_individual, fitness_data, best_genomes)
+                    population.extend(self.population.fronts[i])
+
+                    i += 1
+
+                self.__calculate_crowding_distance(self.population.fronts[i])
+
+                population.extend(
+                    sorted(self.population.fronts[i])[:self.population_size-len(population.population)]
+                )
+
+                old_population = self.population
+                self.population = population
 
                 if self.log:
-                    self.__log(fitness_data, best_genomes)
+                    self.__log()
 
-                if self.__is_simulation_finished(best_individual.fitness):
+                if self.max_number_of_generations is not None and \
+                        self.parameters['generation_number'] + 1 >= self.max_number_of_generations:
+                    print('Maximum number of generations reached!')
+
                     break
 
                 self.parameters['generation_number'] += 1
+
             except KeyboardInterrupt:
                 break
 
+        self.__generate_fronts(old_population)
+
         return {
             'generation_number': self.parameters['generation_number'],
-            'population': population,
-            'best_individual': best_individual,
-            'best_run_individual': best_run_individual,
-            'fitness_data': fitness_data,
-            'best_genomes': best_genomes,
-            'problem': self.problem
+            'population': old_population
         }

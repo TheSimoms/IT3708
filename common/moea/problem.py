@@ -1,9 +1,13 @@
-from common.moea.reproduction_functions import splice_genome, genome_bit_mutation
+from common.moea.reproduction_functions import splice_genome
 
 
 class BaseProblem:
-    def __init__(self, name):
+    def __init__(self, name, number_of_fitness_values):
         self.name = name
+        self.number_of_fitness_values = number_of_fitness_values
+
+        self.minimum_fitness_values = [None] * self.number_of_fitness_values
+        self.maximum_fitness_values = [None] * self.number_of_fitness_values
 
     @property
     def individual_class(self):
@@ -12,7 +16,7 @@ class BaseProblem:
     def generate_population(self, population_size, genome_size, **kwargs):
         raise NotImplementedError
 
-    def fitness_function(self, genome, **kwargs):
+    def fitness_function(self, individual, **kwargs):
         raise NotImplementedError
 
     def represent_genome(self, genome, **kwargs):
@@ -24,10 +28,6 @@ class BaseProblem:
 
     @staticmethod
     def mutation_function(**kwargs):
-        return genome_bit_mutation(**kwargs)
-
-    @staticmethod
-    def domination_function():
         raise NotImplementedError
 
     @staticmethod

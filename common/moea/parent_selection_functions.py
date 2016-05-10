@@ -12,11 +12,11 @@ def tournament_selection(**kwargs):
         if random_probability(epsilon):
             return choice(group)
 
-        return max(group, key=lambda individual: individual.fitness)
+        return sorted(group)[0]
 
     pairs = []
 
-    while len(pairs) < len(population):
+    while len(pairs) < len(population) / 2:
         tournament_pool = list(population)
 
         tournament_group = sample(tournament_pool, group_size)
