@@ -1,8 +1,7 @@
 from sys import maxsize
 
-from common.ea.utils import crossover
-
 from common.moea.parent_selection_functions import tournament_selection
+from common.moea.utils import crossover
 
 from ex5.src.analysis import plot_single_run
 

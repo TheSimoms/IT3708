@@ -1,4 +1,4 @@
-from common.moea.reproduction_functions import splice_genome
+from common.moea.utils import splice_genome
 
 
 class BaseProblem:
