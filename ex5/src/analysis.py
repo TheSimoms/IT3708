@@ -12,8 +12,8 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
     for i in range(len(data_sets)):
         data_set = data_sets[i]
 
-        x_axis, x_axis_min = data_set[0], min(data_set[0])
-        y_axis, y_axis_min = data_set[1], min(data_set[1])
+        x_axis, x_axis_min = data_set[1], min(data_set[1])
+        y_axis, y_axis_min = data_set[0], min(data_set[0])
 
         if x_min is None or x_axis_min < x_min:
             x_min = x_axis_min

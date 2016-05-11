@@ -29,19 +29,36 @@ def get_parameters():
 
 
 def run_analysis_problem():
+    results = []
     fronts = []
 
     for i in range(3):
         print('\nRun %d' % (i+1))
 
         parameters = get_parameters()
+        population = MOEA(parameters).run()['population']
 
-        fronts.append((
-            MOEA(parameters).run()['population'].fronts[0],
-            parameters
+        title = 'Population size: %d, generations: %d, crossover: %f, mutation: %f\n' % (
+            parameters['population_size'],
+            parameters['max_number_of_generations'],
+            parameters['crossover_probability'],
+            parameters['mutation_probability'],
+        )
+
+        results.append((
+            population.population, 'Population\n%s' % title, 'Population'
         ))
 
+        results.append((
+            population.fronts[0], 'Front\n%s' % title, 'Front'
+        ))
+
+        fronts.append((population.fronts[0], parameters))
+
     plot_pareto_fronts(fronts)
+
+    for result in results:
+        plot_single_run(*result)
 
 
 def run_problem(analysis):
