@@ -7,7 +7,11 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
     x_min = None
     y_min = None
 
-    for data_set in data_sets:
+    markers = ['.', '+', '*']
+
+    for i in range(len(data_sets)):
+        data_set = data_sets[i]
+
         x_axis, x_axis_min = data_set[0], min(data_set[0])
         y_axis, y_axis_min = data_set[1], min(data_set[1])
 
@@ -17,7 +21,7 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
         if y_min is None or y_axis_min < y_min:
             y_min = y_axis_min
 
-        plot.plot(x_axis, y_axis, '.', label=data_set[2])
+        plot.plot(x_axis, y_axis, markers[i], label=data_set[2])
 
     plt.axhline(y=y_min, hold=None)
     plt.axvline(x=x_min, hold=None)
@@ -27,10 +31,11 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
     plt.xlabel(x_axis_name)
     plt.ylabel(y_axis_name)
 
-    box = plot.get_position()
-    plot.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    if len(data_sets) > 1:
+        box = plot.get_position()
+        plot.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-    plot.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plot.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     if file_name is not None:
         plt.savefig('../report/images/tmp/%s.png' % file_name)
