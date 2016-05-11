@@ -4,10 +4,16 @@ from common.ea.utils import crossover
 
 from common.moea.parent_selection_functions import tournament_selection
 
+from ex5.src.analysis import plot_single_run
+
 
 class Population:
-    def __init__(self):
-        self.population = []
+    def __init__(self, population=None):
+        if population is None:
+            self.population = []
+        else:
+            self.population = population
+
         self.fronts = []
 
     def extend(self, individuals):
@@ -27,7 +33,7 @@ class MOEA:
         })
 
         self.crossover_probability = parameters.get('crossover_probability', 0.9)
-        self.mutation_probability = parameters.get('mutation_probability', 0.9)
+        self.mutation_probability = parameters.get('mutation_probability', 0.1)
 
         self.parent_selection_function = tournament_selection
 
@@ -55,7 +61,7 @@ class MOEA:
 
         self.__generate_fitness_values(population.population)
 
-        population.fronts.append([])
+        population.fronts = [[]]
 
         for individual in population.population:
             individual.number_of_dominating_individuals = 0
@@ -78,7 +84,7 @@ class MOEA:
         i = 0
 
         while len(population.fronts[i]) > 0:
-            temp_front = []
+            population.fronts.append([])
 
             for individual in population.fronts[i]:
                 for dominated_individual in individual.dominated_individuals:
@@ -87,17 +93,12 @@ class MOEA:
                     if dominated_individual.number_of_dominating_individuals == 0:
                         dominated_individual.rank = i + 1
 
-                        temp_front.append(dominated_individual)
+                        population.fronts[i+1].append(dominated_individual)
 
             i += 1
 
-            population.fronts.append(temp_front)
-
     def __calculate_crowding_distance(self, front):
         if len(front) > 0:
-            for individual in front:
-                individual.distance = 0
-
             for fitness_index in range(self.problem.number_of_fitness_values):
                 front = sorted(front, key=lambda x: x.fitness[fitness_index])
 
@@ -147,41 +148,35 @@ class MOEA:
 
         return children[:self.population_size]
 
-    def __log(self):
+    def __select_new_population(self):
+        return Population(sorted(self.population.population)[:self.population_size])
+
+    def __log(self, analysis):
         print('Generation number: %d' % (self.parameters['generation_number'] + 1))
 
-    def run(self):
+        if analysis:
+            plot_single_run(
+                self.population.population, 'Whole population, generation %d' %
+                self.parameters['generation_number'], 'Population'
+            )
+
+    def run(self, analysis=False):
         self.parameters['generation_number'] = 0
 
         self.__initialize()
+        self.__generate_fronts()
 
         while True:
             try:
-                self.__generate_fronts()
-                self.__calculate_crowding_distances()
-
                 self.population.extend(self.__generate_offspring())
 
                 self.__generate_fronts()
                 self.__calculate_crowding_distances()
 
-                population = Population()
-
-                i = 0
-
-                while len(population.population) + len(self.population.fronts[i]) <= self.population_size:
-                    population.extend(self.population.fronts[i])
-
-                    i += 1
-
-                population.extend(
-                    sorted(self.population.fronts[i])[:self.population_size-len(population.population)]
-                )
-
-                self.population = population
+                self.population = self.__select_new_population()
 
                 if self.log:
-                    self.__log()
+                    self.__log(analysis)
 
                 if self.max_number_of_generations is not None and \
                         self.parameters['generation_number'] + 1 >= self.max_number_of_generations:

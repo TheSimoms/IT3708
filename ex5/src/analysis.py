@@ -40,26 +40,15 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
     plt.clf()
 
 
-def plot_whole_population(population):
+def plot_single_run(data, title, label):
     x_axis = []
     y_axis = []
 
-    for individual in population:
+    for individual in data:
         x_axis.append(individual.fitness[0])
         y_axis.append(individual.fitness[1])
 
-    make_plot([(x_axis, y_axis, 'Population')], 'Whole population')
-
-
-def plot_pareto_front(front):
-    x_axis = []
-    y_axis = []
-
-    for individual in front:
-        x_axis.append(individual.fitness[0])
-        y_axis.append(individual.fitness[1])
-
-    make_plot([(x_axis, y_axis, 'Pareto front')], 'Pareto front')
+    make_plot([(x_axis, y_axis, label)], title)
 
 
 def plot_pareto_fronts(fronts):

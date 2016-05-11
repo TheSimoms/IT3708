@@ -10,15 +10,13 @@ class Individual:
         self.dominated_individuals = set()
 
     def __lt__(self, individual):
-        if (self.rank < individual.rank) or (
-            (self.rank == individual.rank) and (self.distance > individual.distance)
-        ):
+        if self.rank < individual.rank:
             return True
-        else:
-            return False
+        elif self.rank == individual.rank:
+            if self.distance is not None and individual.distance is not None:
+                return self.distance > individual.distance
 
-    def set_fitness(self, fitness):
-        self.fitness = fitness
+        return False
 
     def dominates(self, individual):
         worse = True

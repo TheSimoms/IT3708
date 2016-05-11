@@ -24,9 +24,13 @@ class Problem(BaseProblem):
         genome = individual.genome
         values = []
 
-        for i in range(len(genome)-1):
+        for i in range(len(genome)):
             current_index = genome[i]
-            next_index = genome[i+1]
+
+            if i == len(genome) - 1:
+                next_index = genome[0]
+            else:
+                next_index = genome[i+1]
 
             if current_index > next_index:
                 value = data[current_index][next_index]

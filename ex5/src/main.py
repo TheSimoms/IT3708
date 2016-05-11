@@ -4,7 +4,7 @@ from common.utils.parameters import get_numeric_parameter, get_boolean_parameter
 
 from ex5.src.loader import load_data
 from ex5.src.problem import Problem
-from ex5.src.analysis import plot_whole_population, plot_pareto_front, plot_pareto_fronts
+from ex5.src.analysis import plot_single_run, plot_pareto_fronts
 
 
 def get_parameters():
@@ -44,19 +44,18 @@ def run_analysis_problem():
     plot_pareto_fronts(fronts)
 
 
-def run_problem(show_whole_population):
+def run_problem(analysis):
     parameters = get_parameters()
 
-    population = MOEA(parameters).run()['population']
+    population = MOEA(parameters).run(analysis)['population']
 
     print('')
 
-    if show_whole_population:
-        if get_boolean_parameter('Show whole population'):
-            plot_whole_population(population.population)
+    if get_boolean_parameter('Show whole population'):
+        plot_single_run(population.population, 'Whole population', 'Population')
 
     if get_boolean_parameter('Show Pareto front'):
-        plot_pareto_front(population.fronts[0])
+        plot_single_run(population.fronts[0], 'Pareto front', 'Pareto front')
 
 
 def main():
