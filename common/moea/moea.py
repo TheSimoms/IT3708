@@ -193,7 +193,14 @@ class MOEA:
 
         print('\nNumber of non-dominated solutions: %d' % len(self.population.fronts[0]))
 
+        for fitness_index in range(self.problem.number_of_fitness_values):
+            print('Objective %d; maximum: %f, minimum: %f' % (
+                fitness_index,
+                self.problem.maximum_fitness_values[fitness_index],
+                self.problem.minimum_fitness_values[fitness_index]
+            ))
+
         return {
             'generation_number': self.parameters['generation_number'],
-            'population': self.population
+            'population': self.population,
         }
