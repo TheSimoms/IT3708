@@ -191,6 +191,8 @@ class MOEA:
 
         self.__generate_fronts()
 
+        print('\nNumber of non-dominated solutions: %d' % len(self.population.fronts[0]))
+
         return {
             'generation_number': self.parameters['generation_number'],
             'population': self.population
