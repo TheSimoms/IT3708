@@ -23,9 +23,6 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
 
         plot.plot(x_axis, y_axis, markers[i], label=data_set[2])
 
-    plt.axhline(y=y_min, hold=None)
-    plt.axvline(x=x_min, hold=None)
-
     plt.title(title)
 
     plt.xlabel(x_axis_name)
@@ -36,6 +33,9 @@ def make_plot(data_sets, title, x_axis_name='Distance', y_axis_name='Cost', file
         plot.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
         plot.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    else:
+        plt.axhline(y=y_min, hold=None)
+        plt.axvline(x=x_min, hold=None)
 
     if file_name is not None:
         plt.savefig('../report/images/tmp/%s.png' % file_name)
