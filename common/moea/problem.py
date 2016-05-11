@@ -1,4 +1,4 @@
-from common.moea.utils import splice_genome
+from common.moea.utils import ordered_crossover
 
 
 class BaseProblem:
@@ -24,7 +24,7 @@ class BaseProblem:
 
     @staticmethod
     def crossover_function():
-        return splice_genome
+        return ordered_crossover
 
     @staticmethod
     def mutation_function(**kwargs):

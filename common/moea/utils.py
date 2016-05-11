@@ -3,16 +3,15 @@ from random import randint, sample
 from common.ea.utils import random_probability
 
 
-def genome_swap_mutation(**kwargs):
+def reverse_sequence_mutation(**kwargs):
     genome = list(kwargs.get('genome'))
 
-    for i in range(len(genome)):
-        if random_probability(kwargs.get('probability')):
-            swap_position = genome.index(genome[i])
+    if random_probability(kwargs.get('probability')):
+        start, end = list(sorted(sample(range(len(genome)), 2)))
 
-            genome[i], genome[swap_position] = genome[swap_position], genome[i]
+        return genome[:start] + list(reversed(genome[start:end])) + genome[end:]
 
-        return genome
+    return genome
 
 
 def crossover(pair, crossover_probability, crossover_function):
@@ -24,7 +23,7 @@ def crossover(pair, crossover_probability, crossover_function):
         return genome_a, genome_b
 
 
-def splice_genome(genome_a, genome_b):
+def ordered_crossover(genome_a, genome_b):
     genome_size = len(genome_a)
 
     crossover_points = sorted(sample(range(genome_size), randint(genome_size // 10, genome_size // 5)))

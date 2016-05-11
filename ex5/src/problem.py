@@ -2,7 +2,7 @@ from numpy.random import permutation
 
 from common.moea.problem import BaseProblem
 from common.moea.individual import Individual
-from common.moea.utils import genome_swap_mutation
+from common.moea.utils import reverse_sequence_mutation
 
 
 class Problem(BaseProblem):
@@ -66,4 +66,4 @@ class Problem(BaseProblem):
 
     @staticmethod
     def mutation_function(**kwargs):
-        return genome_swap_mutation(**kwargs)
+        return reverse_sequence_mutation(**kwargs)
