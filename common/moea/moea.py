@@ -48,6 +48,8 @@ class MOEA:
             population_size=self.population_size, genome_size=self.genome_size, **self.parameters
         )
 
+        self.__generate_fronts()
+
     def __generate_fitness_values(self, population):
         for individual in population:
             individual.fitness = self.problem.fitness_function(
@@ -163,7 +165,6 @@ class MOEA:
         self.parameters['generation_number'] = 0
 
         self.__initialize()
-        self.__generate_fronts()
 
         while True:
             try:
